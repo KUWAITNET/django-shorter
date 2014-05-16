@@ -12,7 +12,10 @@ from django.views.generic import (
 )
 
 from tinylinks.forms import TinylinkForm
-from tinylinks.models import Tinylink, validate_long_url
+from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
+
+import re
+piwik_id = re.compile(r'^_pk_id')
 
 
 class TinylinkViewMixin(object):
@@ -126,6 +129,27 @@ class TinylinkRedirectView(RedirectView):
                 self.url = tinylink.long_url
                 tinylink.amount_of_views += 1
                 tinylink.save()
+                print tinylink
+
+                try:
+                    ref = self.request.META.get('HTTP_REFERER', '')
+                except KeyError:
+                    ref = ''
+
+                cookies = self.request.COOKIES
+                pk_id = ''
+                for key in cookies:
+                    if piwik_id.search(key):
+                        pk_id = cookies[key]
+
+                tlog = TinylinkLog(
+                    tinylink=tinylink, referrer=ref, cookie=pk_id,
+                    user_agent=self.request.META.get('HTTP_USER_AGENT', ''),
+                    remote_ip=self.request.META['REMOTE_ADDR']
+                )
+                print tlog
+                tlog.save()
+
         return super(TinylinkRedirectView, self).dispatch(*args, **kwargs)
 
     def get_redirect_url(self, **kwargs):

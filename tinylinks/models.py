@@ -10,6 +10,10 @@ from django.utils import timezone
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
 
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
+from django.utils.html import remove_tags
+
 
 def get_url_response(pool, link, url):
     """
@@ -156,3 +160,40 @@ class Tinylink(models.Model):
         if self.last_checked < timezone.now() - timezone.timedelta(minutes=60):
             return True
         return False
+
+    def traffic_statistics(self):
+        data = {'foo': 'bar'}
+        return render_to_string('admin/tinylinks/tinylink/traffic_statistics.html', data)
+
+
+class TinylinkLog(models.Model):
+    """
+    Model to log the usage of the short links
+
+    """
+    tinylink = models.ForeignKey(
+        'Tinylink',
+        verbose_name=_('Tinylink'),
+    )
+
+    referrer = models.URLField(
+        blank=True,
+        max_length=512,
+    )
+
+    user_agent = models.TextField()
+
+    cookie = models.CharField(
+        max_length=127,
+        blank=True,
+        default='',
+    )
+
+    remote_ip = models.GenericIPAddressField()
+
+    datetime = models.DateTimeField(auto_now_add=True)
+
+    tracked = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('-datetime',)

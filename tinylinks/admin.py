@@ -4,7 +4,7 @@ from django.template.defaultfilters import truncatechars
 from django.utils.translation import ugettext_lazy as _
 
 from tinylinks.forms import TinylinkAdminForm
-from tinylinks.models import Tinylink
+from tinylinks.models import Tinylink, TinylinkLog
 
 
 class TinylinkAdmin(admin.ModelAdmin):
@@ -12,6 +12,13 @@ class TinylinkAdmin(admin.ModelAdmin):
                     'last_checked', 'status', 'validation_error')
     search_fields = ['short_url', 'long_url']
     form = TinylinkAdminForm
+
+    readonly_fields = ('traffic_statistics',)
+
+    fieldsets = [
+        ('Tinylink', {'fields': ['user', 'long_url', 'short_url',]}),
+        ('Traffic Statistics', {'fields': ['traffic_statistics',]}),
+    ]
 
     def url_truncated(self, obj):
         return truncatechars(obj.long_url, 60)
@@ -25,3 +32,11 @@ class TinylinkAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tinylink, TinylinkAdmin)
+
+
+class TinylinkLogAdmin(admin.ModelAdmin):
+    list_display = ('tinylink', 'datetime', 'remote_ip', 'tracked')
+    readonly_fields = ('datetime',)
+    date_hierarchy = 'datetime'
+
+admin.site.register(TinylinkLog, TinylinkLogAdmin)
