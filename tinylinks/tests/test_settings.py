@@ -58,6 +58,7 @@ EXTERNAL_APPS = [
     'django.contrib.sites',
     'django_jasmine',
     'django_libs',
+    'rest_framework',
 ]
 
 INTERNAL_APPS = [

@@ -163,7 +163,8 @@ class Tinylink(models.Model):
 
     def traffic_statistics(self):
         data = {'foo': 'bar'}
-        return render_to_string('admin/tinylinks/tinylink/traffic_statistics.html', data)
+        return render_to_string(
+                'admin/tinylinks/tinylink/traffic_statistics.html', data)
 
 
 class TinylinkLog(models.Model):

@@ -1,5 +1,6 @@
 """Views for the ``django-tinylinks`` application."""
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.utils.decorators import method_decorator
@@ -13,6 +14,10 @@ from django.views.generic import (
 
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
+
+from tinylinks.serializers import TinylinkSerializer, UserSerializer
+from rest_framework.views import APIView
+from rest_framework import generics, permissions, viewsets
 
 import re
 piwik_id = re.compile(r'^_pk_id')
@@ -182,3 +187,54 @@ class StatisticsView(ListView):
         if not request.user.is_staff:
             raise Http404
         return super(StatisticsView, self).dispatch(request, *args, **kwargs)
+
+
+class TinylinkList(generics.ListCreateAPIView):
+    """
+    API Class for listing and creating tinylinks
+
+    """
+    queryset = Tinylink.objects.all()
+    serializer_class = TinylinkSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class TinylinkDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API Class for retrieving, updating and destroying tinylinks
+
+    """
+    queryset = Tinylink.objects.all()
+    serializer_class = TinylinkSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class TinylinkViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+
+    """
+    queryset = Tinylink.objects.all()
+    serializer_class = TinylinkSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+            #permissions.IsOwnerOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+

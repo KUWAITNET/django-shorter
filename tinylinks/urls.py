@@ -1,6 +1,7 @@
 """URLs for the ``django-tinylinks`` app."""
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
+from rest_framework.routers import DefaultRouter
 
 from tinylinks.views import (
     StatisticsView,
@@ -9,7 +10,16 @@ from tinylinks.views import (
     TinylinkListView,
     TinylinkRedirectView,
     TinylinkUpdateView,
+    TinylinkList,
+    TinylinkDetail,
+    TinylinkViewSet,
+    UserViewSet,
 )
+
+# Create router and register our API viewsets with it.
+router = DefaultRouter()
+router.register(r'tinylinks', TinylinkViewSet)
+router.register(r'users', UserViewSet)
 
 
 urlpatterns = patterns(
@@ -54,5 +64,25 @@ urlpatterns = patterns(
         r'^(?P<short_url>[a-zA-Z0-9-]+)/?$',
         TinylinkRedirectView.as_view(),
         name='tinylink_redirect',
+    ),
+
+    url(
+        r'^tinylinks/',
+        TinylinkList.as_view(),
+    ),
+
+    url(
+        r'^tinylinks/(?P<pk>[0-9]+)/$',
+        TinylinkDetail.as_view(),
+    ),
+
+    url(
+        r'^api/',
+        include(router.urls),
+    ),
+
+    url(
+        r'^auth/',
+        include('rest_framework.urls', namespace='rest_framework'),
     ),
 )
