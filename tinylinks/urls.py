@@ -14,6 +14,10 @@ from tinylinks.views import (
     TinylinkDetail,
     TinylinkViewSet,
     UserViewSet,
+    db_stats,
+    stats,
+    tinylink_stats,
+    tinylink_expand,
 )
 
 # Create router and register our API viewsets with it.
@@ -84,5 +88,29 @@ urlpatterns = patterns(
     url(
         r'^auth/',
         include('rest_framework.urls', namespace='rest_framework'),
+    ),
+
+    url(
+        r'^api/db-stats/$',
+        db_stats,
+        name='api_db_stats'
+    ),
+
+    url(
+        r'^api/stats/$',
+        stats,
+        name='api_stats'
+    ),
+
+    url(
+        r'^api/url-stats/(?P<short_url>\w+)/$',
+        tinylink_stats,
+        name='api_url_stats'
+    ),
+
+    url(
+        r'^api/expand/(?P<short_url>\w+)/$',
+        tinylink_expand,
+        name='api_tinylink_expand'
     ),
 )

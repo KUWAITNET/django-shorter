@@ -2,6 +2,7 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models import Count, Sum
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.generic import (
@@ -15,9 +16,11 @@ from django.views.generic import (
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 
-from tinylinks.serializers import TinylinkSerializer, UserSerializer
 from rest_framework.views import APIView
-from rest_framework import generics, permissions, viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import generics, permissions, viewsets, status
+from tinylinks.serializers import TinylinkSerializer, UserSerializer
 
 import re
 piwik_id = re.compile(r'^_pk_id')
@@ -238,3 +241,86 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
+@api_view(['GET'])
+def db_stats(request):
+    """
+    Total number of tinylinks and sum of clicks
+
+    """
+    clicks = Tinylink.objects.aggregate(Sum('amount_of_views')).amount_of_views__sum
+    data = {
+        'tinylinks': Tinylink.objects.count(),
+        'clicks': clicks
+    }
+
+    return Response(data)
+
+
+@api_view(['GET'])
+# TODO: Pagination and filtering
+def stats(request):
+    """
+    Stats about tinylinks
+
+    """
+
+    data = {}
+
+    count = 0
+    for link in Tinylink.objects.all():
+        data['link_' + str(count)] = {
+            'shorturl': link.short_url,
+            'url': link.long_url,
+            'clicks': link.amount_of_views,
+            'is_broken': link.is_broken
+        }
+        count += 1
+
+    data['stats'] = {
+        'tinylinks': Tinylink.objects.count(),
+        'clicks': Tinylink.objects.aggregate(Sum('amount_of_views'))
+    }
+
+    return Response(data)
+
+
+@api_view(['GET'])
+def tinylink_stats(request, short_url):
+    '''
+    Return stats for a link
+
+    '''
+    tinylink = Tinylink.objects.get(short_url=short_url)
+
+    if not tinylink:
+        data = { 'message': 'Error: Link not found' }
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    data = {}
+    data['link'] = {
+        'short_url': tinylink.short_url,
+        'long_url': tinylink.long_url,
+        'clicks': tinylink.amount_of_views
+    }
+
+    return Response(data)
+
+@api_view(['GET'])
+def tinylink_expand(request, short_url):
+    '''
+    Expand a short URL into a long URL
+
+    '''
+    tinylink = Tinylink.objects.get(short_url=short_url)
+
+    if not tinylink:
+        data = { 'message': 'Error: Link not found' }
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    data = {
+        'short_url': tinylink.short_url,
+        'long_url': tinylink.long_url,
+    }
+
+    return Response(data)

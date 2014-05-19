@@ -166,6 +166,14 @@ class Tinylink(models.Model):
         return render_to_string(
                 'admin/tinylinks/tinylink/traffic_statistics.html', data)
 
+    def statistics(self):
+        data = {
+            'tinylinks': Tinylinks.objects.values('short_url').annotate(Count('short_url')),
+            'clicks': TinylinkLog.objects.values('tinylink').annotate(Count('tinylink'))
+        }
+
+        return data
+
 
 class TinylinkLog(models.Model):
     """
