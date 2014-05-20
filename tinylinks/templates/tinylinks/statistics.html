@@ -3,9 +3,10 @@
 {% load url from future %}
 
 {% block main %}
-<h1>{% trans "Statistics" %}</h1>
+<div class="container">
+<h2>{% trans "Statistics" %}</h2>
 {% if object_list %}
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <td>{{ object_list.0|get_verbose:"user" }}</td>
@@ -32,4 +33,5 @@
 {% else %}
 <p>{% trans "No tinylinks added yet." %}</p>
 {% endif %}
+</div>
 {% endblock %}

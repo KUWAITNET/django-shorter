@@ -293,7 +293,6 @@ def stats(request):
         count += 1
 
     links = tuple(links.items())
-    print links
     paginator = Paginator(links, paginate_by)
 
     try:
