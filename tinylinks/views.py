@@ -2,6 +2,7 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count, Sum
 from django.http import Http404
 from django.utils.decorators import method_decorator
@@ -242,34 +243,48 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
+def database_statistics():
+    """
+    Helper function to retrieve total number of tinylinks and the sum of
+    all clicks the system recorded
+    """
+    return {
+        'tinylinks': Tinylink.objects.count(),
+        'clicks': Tinylink.objects.aggregate(Sum('amount_of_views'))
+                        .get('amount_of_views__sum', 0)
+    }
+
+
 @api_view(['GET'])
 def db_stats(request):
     """
     Total number of tinylinks and sum of clicks
 
     """
-    clicks = Tinylink.objects.aggregate(Sum('amount_of_views')).amount_of_views__sum
-    data = {
-        'tinylinks': Tinylink.objects.count(),
-        'clicks': clicks
-    }
+    data = database_statistics()
 
     return Response(data)
 
 
 @api_view(['GET'])
-# TODO: Pagination and filtering
 def stats(request):
     """
     Stats about tinylinks
 
     """
 
-    data = {}
+    try :
+        paginate_by = request.QUERY_PARAMS.get('paginate_by')
+        page = request.QUERY_PARAMS.get('page')
+    except:
+        paginate_by = 10
+        page = 1
 
+
+    links = {}
     count = 0
     for link in Tinylink.objects.all():
-        data['link_' + str(count)] = {
+        links['link_' + str(count)] = {
             'shorturl': link.short_url,
             'url': link.long_url,
             'clicks': link.amount_of_views,
@@ -277,20 +292,34 @@ def stats(request):
         }
         count += 1
 
-    data['stats'] = {
-        'tinylinks': Tinylink.objects.count(),
-        'clicks': Tinylink.objects.aggregate(Sum('amount_of_views'))
-    }
+    links = tuple(links.items())
+    print links
+    paginator = Paginator(links, paginate_by)
+
+    try:
+        links = paginator.page(int(page))
+    except PageNotAnInteger:
+        links = paginator.page(1)
+    except EmptyPage:
+        links = paginator.page(paginator.num_pages)
+
+    data = {}
+    data['links'] = links.object_list
+    data['stats'] = database_statistics()
 
     return Response(data)
 
 
 @api_view(['GET'])
-def tinylink_stats(request, short_url):
-    '''
+def tinylink_stats(request, short_url=''):
+    """
     Return stats for a link
 
-    '''
+    """
+
+    if not short_url:
+        short_url = request.QUERY_PARAMS.get('short_url')
+
     tinylink = Tinylink.objects.get(short_url=short_url)
 
     if not tinylink:
@@ -307,11 +336,15 @@ def tinylink_stats(request, short_url):
     return Response(data)
 
 @api_view(['GET'])
-def tinylink_expand(request, short_url):
-    '''
+def tinylink_expand(request, short_url=''):
+    """
     Expand a short URL into a long URL
 
-    '''
+    """
+
+    if not short_url:
+        short_url = request.QUERY_PARAMS.get('short_url')
+
     tinylink = Tinylink.objects.get(short_url=short_url)
 
     if not tinylink:

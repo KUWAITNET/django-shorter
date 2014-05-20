@@ -103,13 +103,25 @@ urlpatterns = patterns(
     ),
 
     url(
-        r'^api/url-stats/(?P<short_url>\w+)/$',
+        r'^api/url-stats/(?P<short_url>\w+)/',
         tinylink_stats,
         name='api_url_stats'
     ),
 
     url(
-        r'^api/expand/(?P<short_url>\w+)/$',
+        r'^api/url-stats/',
+        tinylink_stats,
+        name='api_url_stats'
+    ),
+
+    url(
+        r'^api/expand/(?P<short_url>\w+)/',
+        tinylink_expand,
+        name='api_tinylink_expand'
+    ),
+
+    url(
+        r'^api/expand/',
         tinylink_expand,
         name='api_tinylink_expand'
     ),

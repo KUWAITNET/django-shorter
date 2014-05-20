@@ -161,10 +161,12 @@ class Tinylink(models.Model):
             return True
         return False
 
-    def traffic_statistics(self):
+    def trrrraffic_statistics(self):
         data = {'foo': 'bar'}
-        return render_to_string(
+        response = render_to_string(
                 'admin/tinylinks/tinylink/traffic_statistics.html', data)
+
+        return mark_safe(response)
 
     def statistics(self):
         data = {
