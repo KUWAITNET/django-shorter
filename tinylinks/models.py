@@ -168,14 +168,6 @@ class Tinylink(models.Model):
 
         return mark_safe(response)
 
-    def statistics(self):
-        data = {
-            'tinylinks': Tinylinks.objects.values('short_url').annotate(Count('short_url')),
-            'clicks': TinylinkLog.objects.values('tinylink').annotate(Count('tinylink'))
-        }
-
-        return data
-
 
 class TinylinkLog(models.Model):
     """
