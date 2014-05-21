@@ -32,7 +32,7 @@ class Command(BaseCommand):
             params.update({'rand': random.randint(0, 1000000), 'url': address, 'urlref': view.referrer,
                            'ua': view.user_agent.encode('utf-8'), 'cip': view.remote_ip,
                            'cdt': view.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-                           'country': G.city(view.remote_ip), 'new_visit': 1,
+                           'country': G.country(view.remote_ip).get('country_code').lower(), 'new_visit': 1,
                            'idsite': settings.PIWIK_ID, 'rec': 1, 'token_auth': settings.PIWIK_TOKEN,
                            'action_name': url.long_url.encode('utf-8'), 'apiv': 1})
 

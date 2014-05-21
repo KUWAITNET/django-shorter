@@ -19,7 +19,7 @@ class TinylinkAdmin(admin.ModelAdmin):
 
     fieldsets = [
             ('Tinylink', {'fields': ['user', 'long_url', 'short_url',]}),
-            ('Traffic Statistics', {'fields': ['traffic_statistics',]}),
+            #('Traffic Statistics', {'fields': ['traffic_statistics',]}),
     ]
 
     def traffic_statistics(self, instance):
