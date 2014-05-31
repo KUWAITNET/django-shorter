@@ -10,8 +10,6 @@ from tinylinks.views import (
     TinylinkListView,
     TinylinkRedirectView,
     TinylinkUpdateView,
-    TinylinkList,
-    TinylinkDetail,
     TinylinkViewSet,
     UserViewSet,
     db_stats,
@@ -68,16 +66,6 @@ urlpatterns = patterns(
         r'^(?P<short_url>[a-zA-Z0-9-]+)/?$',
         TinylinkRedirectView.as_view(),
         name='tinylink_redirect',
-    ),
-
-    url(
-        r'^tinylinks/',
-        TinylinkList.as_view(),
-    ),
-
-    url(
-        r'^tinylinks/(?P<pk>[0-9]+)/$',
-        TinylinkDetail.as_view(),
     ),
 
     url(

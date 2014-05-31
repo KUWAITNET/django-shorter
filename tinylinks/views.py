@@ -17,10 +17,11 @@ from django.views.generic import (
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework import generics, permissions, viewsets, status
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
 
 import re
@@ -193,42 +194,15 @@ class StatisticsView(ListView):
         return super(StatisticsView, self).dispatch(request, *args, **kwargs)
 
 
-class TinylinkList(generics.ListCreateAPIView):
-    """
-    API Class for listing and creating tinylinks
-
-    """
-    queryset = Tinylink.objects.all()
-    serializer_class = TinylinkSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def pre_save(self, obj):
-        obj.user = self.request.user
-
-
-class TinylinkDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API Class for retrieving, updating and destroying tinylinks
-
-    """
-    queryset = Tinylink.objects.all()
-    serializer_class = TinylinkSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def pre_save(self, obj):
-        obj.user = self.request.user
-
-
 class TinylinkViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
+    This viewset provides `list`, `create`, `retrieve`, `update` and `destroy` actions.
 
     """
     queryset = Tinylink.objects.all()
     serializer_class = TinylinkSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-            #permissions.IsOwnerOrReadOnly,)
 
     def pre_save(self, obj):
         obj.user = self.request.user
@@ -274,12 +248,11 @@ def stats(request):
     """
 
     try :
-        paginate_by = request.QUERY_PARAMS.get('paginate_by')
-        page = request.QUERY_PARAMS.get('page')
+        paginate_by = int(request.QUERY_PARAMS.get('paginate_by', ''))
+        page = int(request.QUERY_PARAMS.get('page', ''))
     except:
         paginate_by = 10
         page = 1
-
 
     links = {}
     count = 0
@@ -296,7 +269,7 @@ def stats(request):
     paginator = Paginator(links, paginate_by)
 
     try:
-        links = paginator.page(int(page))
+        links = paginator.page(page)
     except PageNotAnInteger:
         links = paginator.page(1)
     except EmptyPage:
@@ -317,7 +290,7 @@ def tinylink_stats(request, short_url=''):
     """
 
     if not short_url:
-        short_url = request.QUERY_PARAMS.get('short_url')
+        short_url = request.QUERY_PARAMS.get('short_url', '')
 
     tinylink = Tinylink.objects.get(short_url=short_url)
 
@@ -342,7 +315,7 @@ def tinylink_expand(request, short_url=''):
     """
 
     if not short_url:
-        short_url = request.QUERY_PARAMS.get('short_url')
+        short_url = request.QUERY_PARAMS.get('short_url', '')
 
     tinylink = Tinylink.objects.get(short_url=short_url)
 
