@@ -19,18 +19,7 @@ class TinylinkAdmin(admin.ModelAdmin):
 
     fieldsets = [
             ('Tinylink', {'fields': ['user', 'long_url', 'short_url',]}),
-            #('Traffic Statistics', {'fields': ['traffic_statistics',]}),
     ]
-
-    def traffic_statistics(self, instance):
-        data = {'foo': 'bar'}
-        response = render_to_string(
-                'admin/tinylinks/tinylink/traffic_statistics.html', data)
-
-        return response
-
-    traffic_statistics.short_description = 'Traffic Statistics'
-    traffic_statistics.allow_tags = True
 
     def url_truncated(self, obj):
         return truncatechars(obj.long_url, 60)
