@@ -24,10 +24,6 @@ class Command(BaseCommand):
         for view in views:
             url = view.tinylink
             params = parse_cookie(view.cookie)
-            #if url.campaign_name:
-                #visited = urlencode({'pk_campaign': url.campaign_name, 'pk_kwd': url.campaign_keyword})
-                #address = 'http://%s/%s?%s' % (CURRENT_DOMAIN, url.slug, visited)
-            #else:
             address = 'http://%s/%s' % (CURRENT_DOMAIN, url.short_url)
             params.update({'rand': random.randint(0, 1000000), 'url': address, 'urlref': view.referrer,
                            'ua': view.user_agent.encode('utf-8'), 'cip': view.remote_ip,
@@ -39,7 +35,7 @@ class Command(BaseCommand):
             res = '?' + urlencode(params)
             visits.append(res)
         payload = {'requests': visits, 'token_auth': settings.PIWIK_TOKEN}
-        print payload
+        #print payload
         req = urllib2.Request(settings.PIWIK_URL)
         req.add_header('Content-Type', 'application/json')
         response = urllib2.urlopen(req, json.dumps(json.dumps(payload)))
