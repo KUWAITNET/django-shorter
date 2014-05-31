@@ -1,9 +1,13 @@
-Django Tinylinks
+Django URL Shortner
 ================
 
 A Django application that adds an URL shortener to your site similar to bit.ly. 
 
-This is an early alpha. Use it with caution.
+This is a fork of [django-tinylinks](https://github.com/bitmazk/django-tinylinks).
+
+This project adds a REST API and integration with the [Piwik](http://piwik.org/) Open Analytics
+Platform.
+
 
 Installation
 ------------
@@ -14,15 +18,12 @@ You need to install the following prerequisites in order to use this app::
     pip install South==0.7.6
     pip install django-libs==0.8
     pip install urllib3==1.5
+    pip install djangorestframework==2.3.13
 
 
 If you want to install the latest stable release from PyPi::
 
-    $ pip install django-tinylinks
-
-If you feel adventurous and want to install the latest commit from GitHub::
-
-    $ pip install -e git://github.com/bitmazk/django-tinylinks.git#egg=tinylinks
+    $ pip install TODO
 
 Add ``tinylinks`` to your ``INSTALLED_APPS``::
 
@@ -78,6 +79,35 @@ can execute the command 300/10=30 times during one period.
 Now we can devide the total number of URLs by 30 and on each run we will
 update the X most recent URLs. After 10 runs, we will have updated all URLs.
 
+PIWIK_ID
+++++++++
+
+Default: None
+
+The Piwik ID for the of the website in which this app is installed.
+This should be easily found on the Settings page under the Websites menu.
+
+PIWIK_URL
++++++++++
+
+Default: None
+
+This is the URL at which your copy of Piwik is running.
+
+PIWIK_TOKEN
++++++++++++
+
+Default: None
+
+The API key provided by Piwik.
+
+GEOIP_PATH
+++++++++++
+
+Default: None
+
+The path for the MaxMin GeoIP data.
+
 Usage
 -----
 
@@ -91,6 +121,156 @@ change the short URL to your liking.
 
 Now visit `yoursite.com/s/yourshorturl` and you will be redirected to your long
 URL.
+
+Piwik Integration
+-----------------
+
+If you want to export the data to Piwik, you will have to own a clean
+installation of it, so go and download it from (piwik.org)[http://piwik.org/]
+and then follow the (installation
+guide)[http://piwik.org/docs/installation-maintenance/].
+
+API Resources
+-------------
+
+The API is created using django rest framework and it has 6 resources at the
+moment.
+
+
+Tinylinks
++++++++++
+
+/api/tinylinks/
+
+The API allows you to retrievce, create, delete and update your tinylinks.
+
+Creating and modifying tinylinks requires authentication and a valid csrf token.
+
+DEFINITION::
+
+    GET http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}
+
+
+DEFINITION::
+
+    POST http://your-project-url.com/s/api/tinylinks/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/tinylinks/ -
+
+
+DEFINITION::
+
+    PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/tinylinks/ -
+
+
+DEFINITION::
+
+    DELETE http://your-project-url.com/s/api/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/tinylinks/ -
+
+
+Users
++++++
+
+/api/users/
+
+This resource exposes information about users.
+
+DEFINITION::
+
+    GET http://your-project-url.com/s/api/users/{USER_ID}/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/users/{USER_ID}/
+
+
+Database statistics
++++++++++++++++++++
+
+/api/db-stats/
+
+Retrieve general information about the links stored in the database.
+Offers a simple way to acces the total number of links and the total number of
+clicks.
+
+DEFINITION::
+
+    GET http://your-project-url.com/s/api/db-stats/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/db-stats/
+
+
+Statistics
+++++++++++
+
+/api/stats/
+
+Retrieve a list of statistics for every tinylinks object in the database.
+
+Query Paramanters:
+* paginate_by
+* page
+
+DEFINITION::
+
+    GET http://your-project-url.com/s/api/stats/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/stats/
+
+
+Tinylink statistics
++++++++++++++++++++
+
+/api/url-stats/
+
+Retrieve statistics for individual tinylink objects.
+
+Query Parameters:
+* short_url
+
+DEFINITION::
+
+    GET http://your-project-url.com/s/api/url-stats/{SHORT_URL}/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/url-stats/{SHORT_URL}/
+
+Expanding tinylinks
++++++++++++++++++++
+
+/api/expand/
+
+Expand the short link into the long link.
+
+Query Parameters:
+* short_url
+
+DEFINITION::
+
+    GET http://your-project-url.com/s/api/expand/{SHORT_URL}/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/expand{SHORT_URL}/
 
 Contribute
 ----------

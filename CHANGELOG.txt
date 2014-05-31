@@ -1,5 +1,11 @@
 === (ongoing) ===
 
+=== 0.6 ===
+
+* Project got forked by KuwaitNET
+* Added an API to work with the shortner
+* Provided an easy way to export data to Piwik - an analytics provider
+
 === 0.5.3 ===
 
 * Fixed irritating status field in admin list
