@@ -112,14 +112,14 @@ Usage
 -----
 
 Just visit the root URL of the app. Let's assume you hooked the app into your
-``urls.py`` at `s/`, then visit `yoursite.com/s/`. You will see your tinylist
-overview. Go to `yoursite.com/s/create/` to see a form to submit a new long URL.
+``urls.py`` at `s/`, then visit `your-project-url.com/s/`. You will see your tinylist
+overview. Go to `your-project-url.com/s/create/` to see a form to submit a new long URL.
 
 After submitting, you will be redirected to a new page which shows the
 generated short URL. If you want this URL to have a different short URL, just
 change the short URL to your liking.
 
-Now visit `yoursite.com/s/yourshorturl` and you will be redirected to your long
+Now visit `your-project-url.com/s/yourshorturl` and you will be redirected to your long
 URL.
 
 Piwik Integration
@@ -161,25 +161,38 @@ DEFINITION::
 
 EXAMPLE REQUEST::
 
-    curl http://your-project-url.com/s/api/tinylinks/ -
+    curl -X POST http://your-project-url.com/s/api/tinylinks/ -u user:pass
+    -d "long_url=http://google.com/&short_url=goog"
 
 
 DEFINITION::
 
-    PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}
+    PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
 EXAMPLE REQUEST::
 
-    curl http://your-project-url.com/s/api/tinylinks/ -
+    curl -X PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d
+    "long_url=http://google.com/&short_url=g"
 
 
 DEFINITION::
 
-    DELETE http://your-project-url.com/s/api/
+    PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
 EXAMPLE REQUEST::
 
-    curl http://your-project-url.com/s/api/tinylinks/ -
+    curl -X PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d
+    "short_url=g"
+
+
+DEFINITION::
+
+    DELETE http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
+
+EXAMPLE REQUEST::
+
+    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u
+    user:pass
 
 
 Users
