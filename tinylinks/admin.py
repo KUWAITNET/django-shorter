@@ -3,15 +3,34 @@ from django.contrib import admin
 from django.template.defaultfilters import truncatechars
 from django.utils.translation import ugettext_lazy as _
 
+from django.template.loader import render_to_string
+
 from tinylinks.forms import TinylinkAdminForm
-from tinylinks.models import Tinylink
+from tinylinks.models import Tinylink, TinylinkLog
 
 
 class TinylinkAdmin(admin.ModelAdmin):
     list_display = ('short_url', 'url_truncated', 'amount_of_views', 'user',
-                    'last_checked', 'status', 'validation_error')
+                    'last_checked', 'status', 'validation_error',)
     search_fields = ['short_url', 'long_url']
     form = TinylinkAdminForm
+
+    readonly_fields = ('traffic_statistics',)
+
+    fieldsets = [
+            ('Tinylink', {'fields': ['user', 'long_url', 'short_url',]}),
+            #('Traffic Statistics', {'fields': ['traffic_statistics',]}),
+    ]
+
+    def traffic_statistics(self, instance):
+        data = {'foo': 'bar'}
+        response = render_to_string(
+                'admin/tinylinks/tinylink/traffic_statistics.html', data)
+
+        return response
+
+    traffic_statistics.short_description = 'Traffic Statistics'
+    traffic_statistics.allow_tags = True
 
     def url_truncated(self, obj):
         return truncatechars(obj.long_url, 60)
@@ -25,3 +44,11 @@ class TinylinkAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tinylink, TinylinkAdmin)
+
+
+class TinylinkLogAdmin(admin.ModelAdmin):
+    list_display = ('tinylink', 'datetime', 'remote_ip', 'tracked')
+    readonly_fields = ('datetime',)
+    date_hierarchy = 'datetime'
+
+admin.site.register(TinylinkLog, TinylinkLogAdmin)

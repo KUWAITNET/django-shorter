@@ -1,0 +1,75 @@
+<table border="0" cellspacing="">
+    <tr>
+        <td valign="top">
+            <ul id="stats_lines" class="toggle_display stat_line">
+                <li><a href="#stat_line_24">Last 24 hours</a><li><a href="#stat_line_all">All time</a>
+            </ul>
+            <div id='stat_line_24' class='stats_line line' style='display:block'><h3>Number of hits : Last 24 hours</h3>
+                <script id="yourls_graphstat_line_24" type="text/javascript">
+                {% autoescape off %}
+                    function yourls_graphstat_line_24() {
+                        var data = google.visualization.arrayToDataTable([]);
+
+                        var options = {
+                            'legend': "none",
+                            'pointSize': 3,
+                            'theme': "maximized",
+                            'curveType': "function",
+                            'width': 430,
+                            'height': 220,
+                            'hAxis': {minTextSpacing: 80, maxTextLines: 1, maxAlternation: 1},
+                            'vAxis': {minValue: -0.5, format: '#'},
+                            'colors': ['#2a85b3']
+                        }
+                        new google.visualization.LineChart( document.getElementById('visualization_stat_line_24') ).draw( data, options );}
+                        google.setOnLoadCallback( yourls_graphstat_line_24 );
+                {% endautoescape %}
+                </script>
+                <div id="visualization_stat_line_24"></div>
+            </div>
+            {% comment %}
+            <div id='stat_line_all' class='stats_line line' style='display:none'><h3>Number of hits : All time</h3>
+                <script id="yourls_graphstat_line_all" type="text/javascript">
+                    function yourls_graphstat_line_all() {
+                        var data = google.visualization.arrayToDataTable([]);
+
+                        var options = {
+                            'legend': "none",
+                            'pointSize': 3,
+                            'theme': "maximized",
+                            'curveType': "function",
+                            'width': 430,
+                            'height': 220,
+                            'hAxis': {minTextSpacing: 80, maxTextLines: 1, maxAlternation: 1},
+                            'vAxis': {minValue: -0.5, format: '#'},
+                            'colors': ['#2a85b3']
+                        }
+                        new google.visualization.LineChart( document.getElementById('visualization_stat_line_all') ).draw( data, options );}
+                        google.setOnLoadCallback( yourls_graphstat_line_all );
+                </script>
+                <div id="visualization_stat_line_all"></div>
+            </div>
+            {% endcomment %}
+
+        </td>
+        {% comment %}
+        <td valign="top">
+            <h3>Historical click count</h3>
+            <p>Short URL created on May 5, 2014 @ 8:28 am (about 8 days ago)</p>
+            <div class="wrap_unfloat">
+                <ul class="no_bullet toggle_display stat_line" id="historical_clicks">
+                    <li><span class='historical_link'><a href='#stat_line_24'>Last 24 hours</a></span> <span class='historical_count'>1 hit</span> 0.04 per hour</li>
+                    <li><span class='historical_link'>Last 7 days</span> <span class='historical_count'>1 hit</span> </li>
+                    <li><span class='historical_link'>Last 30 days</span> <span class='historical_count'>1 hit</span> </li>
+                    <li><span class='historical_link'><a href='#stat_line_all'>All time</a></span> <span class='historical_count'>1 hit</span> 0.13 per day</li>
+                </ul>
+            </div>
+
+            <h3>Best day</h3>
+            <p><strong><strong>1</strong> hit on May 13, 2014.
+
+        </td>
+        {% endcomment %}
+
+    </tr>
+</table>

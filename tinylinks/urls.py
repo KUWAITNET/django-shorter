@@ -1,6 +1,7 @@
 """URLs for the ``django-tinylinks`` app."""
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
+from rest_framework.routers import DefaultRouter
 
 from tinylinks.views import (
     StatisticsView,
@@ -9,7 +10,20 @@ from tinylinks.views import (
     TinylinkListView,
     TinylinkRedirectView,
     TinylinkUpdateView,
+    TinylinkList,
+    TinylinkDetail,
+    TinylinkViewSet,
+    UserViewSet,
+    db_stats,
+    stats,
+    tinylink_stats,
+    tinylink_expand,
 )
+
+# Create router and register our API viewsets with it.
+router = DefaultRouter()
+router.register(r'tinylinks', TinylinkViewSet)
+router.register(r'users', UserViewSet)
 
 
 urlpatterns = patterns(
@@ -54,5 +68,61 @@ urlpatterns = patterns(
         r'^(?P<short_url>[a-zA-Z0-9-]+)/?$',
         TinylinkRedirectView.as_view(),
         name='tinylink_redirect',
+    ),
+
+    url(
+        r'^tinylinks/',
+        TinylinkList.as_view(),
+    ),
+
+    url(
+        r'^tinylinks/(?P<pk>[0-9]+)/$',
+        TinylinkDetail.as_view(),
+    ),
+
+    url(
+        r'^api/',
+        include(router.urls),
+    ),
+
+    url(
+        r'^auth/',
+        include('rest_framework.urls', namespace='rest_framework'),
+    ),
+
+    url(
+        r'^api/db-stats/$',
+        db_stats,
+        name='api_db_stats'
+    ),
+
+    url(
+        r'^api/stats/$',
+        stats,
+        name='api_stats'
+    ),
+
+    url(
+        r'^api/url-stats/(?P<short_url>\w+)/',
+        tinylink_stats,
+        name='api_url_stats'
+    ),
+
+    url(
+        r'^api/url-stats/',
+        tinylink_stats,
+        name='api_url_stats'
+    ),
+
+    url(
+        r'^api/expand/(?P<short_url>\w+)/',
+        tinylink_expand,
+        name='api_tinylink_expand'
+    ),
+
+    url(
+        r'^api/expand/',
+        tinylink_expand,
+        name='api_tinylink_expand'
     ),
 )

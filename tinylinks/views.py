@@ -1,6 +1,9 @@
 """Views for the ``django-tinylinks`` application."""
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count, Sum
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.generic import (
@@ -12,7 +15,16 @@ from django.views.generic import (
 )
 
 from tinylinks.forms import TinylinkForm
-from tinylinks.models import Tinylink, validate_long_url
+from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import generics, permissions, viewsets, status
+from tinylinks.serializers import TinylinkSerializer, UserSerializer
+
+import re
+piwik_id = re.compile(r'^_pk_id')
 
 
 class TinylinkViewMixin(object):
@@ -126,6 +138,27 @@ class TinylinkRedirectView(RedirectView):
                 self.url = tinylink.long_url
                 tinylink.amount_of_views += 1
                 tinylink.save()
+                print tinylink
+
+                try:
+                    ref = self.request.META.get('HTTP_REFERER', '')
+                except KeyError:
+                    ref = ''
+
+                cookies = self.request.COOKIES
+                pk_id = ''
+                for key in cookies:
+                    if piwik_id.search(key):
+                        pk_id = cookies[key]
+
+                tlog = TinylinkLog(
+                    tinylink=tinylink, referrer=ref, cookie=pk_id,
+                    user_agent=self.request.META.get('HTTP_USER_AGENT', ''),
+                    remote_ip=self.request.META['REMOTE_ADDR']
+                )
+                print tlog
+                tlog.save()
+
         return super(TinylinkRedirectView, self).dispatch(*args, **kwargs)
 
     def get_redirect_url(self, **kwargs):
@@ -158,3 +191,168 @@ class StatisticsView(ListView):
         if not request.user.is_staff:
             raise Http404
         return super(StatisticsView, self).dispatch(request, *args, **kwargs)
+
+
+class TinylinkList(generics.ListCreateAPIView):
+    """
+    API Class for listing and creating tinylinks
+
+    """
+    queryset = Tinylink.objects.all()
+    serializer_class = TinylinkSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class TinylinkDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API Class for retrieving, updating and destroying tinylinks
+
+    """
+    queryset = Tinylink.objects.all()
+    serializer_class = TinylinkSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class TinylinkViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+
+    """
+    queryset = Tinylink.objects.all()
+    serializer_class = TinylinkSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+            #permissions.IsOwnerOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+def database_statistics():
+    """
+    Helper function to retrieve total number of tinylinks and the sum of
+    all clicks the system recorded
+    """
+    return {
+        'tinylinks': Tinylink.objects.count(),
+        'clicks': Tinylink.objects.aggregate(Sum('amount_of_views'))
+                        .get('amount_of_views__sum', 0)
+    }
+
+
+@api_view(['GET'])
+def db_stats(request):
+    """
+    Total number of tinylinks and sum of clicks
+
+    """
+    data = database_statistics()
+
+    return Response(data)
+
+
+@api_view(['GET'])
+def stats(request):
+    """
+    Stats about tinylinks
+
+    """
+
+    try :
+        paginate_by = request.QUERY_PARAMS.get('paginate_by')
+        page = request.QUERY_PARAMS.get('page')
+    except:
+        paginate_by = 10
+        page = 1
+
+
+    links = {}
+    count = 0
+    for link in Tinylink.objects.all():
+        links['link_' + str(count)] = {
+            'shorturl': link.short_url,
+            'url': link.long_url,
+            'clicks': link.amount_of_views,
+            'is_broken': link.is_broken
+        }
+        count += 1
+
+    links = tuple(links.items())
+    paginator = Paginator(links, paginate_by)
+
+    try:
+        links = paginator.page(int(page))
+    except PageNotAnInteger:
+        links = paginator.page(1)
+    except EmptyPage:
+        links = paginator.page(paginator.num_pages)
+
+    data = {}
+    data['links'] = links.object_list
+    data['stats'] = database_statistics()
+
+    return Response(data)
+
+
+@api_view(['GET'])
+def tinylink_stats(request, short_url=''):
+    """
+    Return stats for a link
+
+    """
+
+    if not short_url:
+        short_url = request.QUERY_PARAMS.get('short_url')
+
+    tinylink = Tinylink.objects.get(short_url=short_url)
+
+    if not tinylink:
+        data = { 'message': 'Error: Link not found' }
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    data = {}
+    data['link'] = {
+        'short_url': tinylink.short_url,
+        'long_url': tinylink.long_url,
+        'clicks': tinylink.amount_of_views
+    }
+
+    return Response(data)
+
+@api_view(['GET'])
+def tinylink_expand(request, short_url=''):
+    """
+    Expand a short URL into a long URL
+
+    """
+
+    if not short_url:
+        short_url = request.QUERY_PARAMS.get('short_url')
+
+    tinylink = Tinylink.objects.get(short_url=short_url)
+
+    if not tinylink:
+        data = { 'message': 'Error: Link not found' }
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    data = {
+        'short_url': tinylink.short_url,
+        'long_url': tinylink.long_url,
+    }
+
+    return Response(data)

@@ -53,6 +53,11 @@ class TinylinkForm(forms.ModelForm):
                     label=self.instance._meta.get_field_by_name(
                         'short_url')[0].verbose_name,
                 )
+
+        # Style the form fields with Bootstrap 3
+        self.fields['long_url'].widget.attrs.update({'class' : 'form-control'})
+        self.fields['short_url'].widget.attrs.update({'class' : 'form-control'})
+
         self.user = user
 
     def clean(self):
