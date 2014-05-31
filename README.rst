@@ -106,7 +106,7 @@ GEOIP_PATH
 
 Default: None
 
-The path for the MaxMin GeoIP data.
+The path for the MaxMind GeoIP data.
 
 Usage
 -----
@@ -140,73 +140,69 @@ moment.
 Tinylinks
 +++++++++
 
-/api/tinylinks/
+``/api/tinylinks/``
 
 The API allows you to retrievce, create, delete and update your tinylinks.
 
 Creating and modifying tinylinks requires authentication and a valid csrf token.
 
-DEFINITION::
+DEFINITION:
 
-    GET http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}
+    GET http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}
+    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
 
-DEFINITION::
+DEFINITION:
 
     POST http://your-project-url.com/s/api/tinylinks/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
-    curl -X POST http://your-project-url.com/s/api/tinylinks/ -u user:pass
-    -d "long_url=http://google.com/&short_url=goog"
+    curl -X POST http://your-project-url.com/s/api/tinylinks/ -u user:pass -d "long_url=http://google.com/&short_url=goog"
 
 
-DEFINITION::
+DEFINITION:
 
     PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
-    curl -X PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d
-    "long_url=http://google.com/&short_url=g"
+    curl -X PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d "long_url=http://google.com/&short_url=g"
 
 
-DEFINITION::
+DEFINITION:
 
     PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
-    curl -X PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d
-    "short_url=g"
+    curl -X PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d "short_url=g"
 
 
-DEFINITION::
+DEFINITION:
 
     DELETE http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u
-    user:pass
+    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass
 
 
 Users
 +++++
 
-/api/users/
+``/api/users/``
 
 This resource exposes information about users.
 
-DEFINITION::
+DEFINITION:
 
     GET http://your-project-url.com/s/api/users/{USER_ID}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
     curl http://your-project-url.com/s/api/users/{USER_ID}/
 
@@ -214,17 +210,17 @@ EXAMPLE REQUEST::
 Database statistics
 +++++++++++++++++++
 
-/api/db-stats/
+``/api/db-stats/``
 
 Retrieve general information about the links stored in the database.
 Offers a simple way to acces the total number of links and the total number of
 clicks.
 
-DEFINITION::
+DEFINITION:
 
     GET http://your-project-url.com/s/api/db-stats/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
     curl http://your-project-url.com/s/api/db-stats/
 
@@ -232,19 +228,20 @@ EXAMPLE REQUEST::
 Statistics
 ++++++++++
 
-/api/stats/
+``/api/stats/``
 
 Retrieve a list of statistics for every tinylinks object in the database.
 
 Query Paramanters:
+
 * paginate_by
 * page
 
-DEFINITION::
+DEFINITION:
 
     GET http://your-project-url.com/s/api/stats/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
     curl http://your-project-url.com/s/api/stats/
 
@@ -252,36 +249,38 @@ EXAMPLE REQUEST::
 Tinylink statistics
 +++++++++++++++++++
 
-/api/url-stats/
+``/api/url-stats/``
 
 Retrieve statistics for individual tinylink objects.
 
 Query Parameters:
+
 * short_url
 
-DEFINITION::
+DEFINITION:
 
     GET http://your-project-url.com/s/api/url-stats/{SHORT_URL}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
     curl http://your-project-url.com/s/api/url-stats/{SHORT_URL}/
 
 Expanding tinylinks
 +++++++++++++++++++
 
-/api/expand/
+``/api/expand/``
 
 Expand the short link into the long link.
 
 Query Parameters:
+
 * short_url
 
-DEFINITION::
+DEFINITION:
 
     GET http://your-project-url.com/s/api/expand/{SHORT_URL}/
 
-EXAMPLE REQUEST::
+EXAMPLE REQUEST:
 
     curl http://your-project-url.com/s/api/expand{SHORT_URL}/
 
