@@ -44,7 +44,7 @@ class Command(BaseCommand):
         #print payload
         req = urllib2.Request(settings.PIWIK_URL)
         req.add_header('Content-Type', 'application/json')
-        response = urllib2.urlopen(req, json.dumps(json.dumps(payload)))
+        response = urllib2.urlopen(req, json.dumps(payload))
         print('Another %d views tracked well!' % TRACK_OFFSET)
         TinylinkLog.objects.filter(pk__in=views).update(tracked=True)
 
