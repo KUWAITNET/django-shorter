@@ -15,8 +15,6 @@ class TinylinkAdmin(admin.ModelAdmin):
     search_fields = ['short_url', 'long_url']
     form = TinylinkAdminForm
 
-    readonly_fields = ('traffic_statistics',)
-
     fieldsets = [
             ('Tinylink', {'fields': ['user', 'long_url', 'short_url',]}),
     ]
