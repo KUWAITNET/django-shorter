@@ -112,14 +112,14 @@ Usage
 -----
 
 Just visit the root URL of the app. Let's assume you hooked the app into your
-``urls.py`` at `s/`, then visit `your-project-url.com/s/`. You will see your tinylist
-overview. Go to `your-project-url.com/s/create/` to see a form to submit a new long URL.
+``urls.py`` at `s/`, then visit `example.com/s/`. You will see your tinylist
+overview. Go to `example.com/s/create/` to see a form to submit a new long URL.
 
 After submitting, you will be redirected to a new page which shows the
 generated short URL. If you want this URL to have a different short URL, just
 change the short URL to your liking.
 
-Now visit `your-project-url.com/s/yourshorturl` and you will be redirected to your long
+Now visit `example.com/s/yourshorturl` and you will be redirected to your long
 URL.
 
 Piwik Integration
@@ -148,47 +148,47 @@ Creating and modifying tinylinks requires authentication and a valid csrf token.
 
 DEFINITION:
 
-    GET http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
+    GET http://example.com/s/api/tinylinks/{TINYLINK_ID}/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
+    curl http://example.com/s/api/tinylinks/{TINYLINK_ID}/
 
 
 DEFINITION:
 
-    POST http://your-project-url.com/s/api/tinylinks/
+    POST http://example.com/s/api/tinylinks/
 
 EXAMPLE REQUEST:
 
-    curl -X POST http://your-project-url.com/s/api/tinylinks/ -u user:pass -d "long_url=http://google.com/&short_url=goog"
+    curl -X POST http://example.com/s/api/tinylinks/ -u user:pass -d "long_url=http://google.com/&short_url=goog"
 
 
 DEFINITION:
 
-    PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
+    PUT http://example.com/s/api/tinylinks/{TINYLINK_ID}/
 
 EXAMPLE REQUEST:
 
-    curl -X PUT http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d "long_url=http://google.com/&short_url=g"
+    curl -X PUT http://example.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d "long_url=http://google.com/&short_url=g"
 
 
 DEFINITION:
 
-    PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
+    PATCH http://example.com/s/api/tinylinks/{TINYLINK_ID}/
 
 EXAMPLE REQUEST:
 
-    curl -X PATCH http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d "short_url=g"
+    curl -X PATCH http://example.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass -d "short_url=g"
 
 
 DEFINITION:
 
-    DELETE http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/
+    DELETE http://example.com/s/api/tinylinks/{TINYLINK_ID}/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass
+    curl http://example.com/s/api/tinylinks/{TINYLINK_ID}/ -u user:pass
 
 
 Users
@@ -200,11 +200,11 @@ This resource exposes information about users.
 
 DEFINITION:
 
-    GET http://your-project-url.com/s/api/users/{USER_ID}/
+    GET http://example.com/s/api/users/{USER_ID}/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/users/{USER_ID}/
+    curl http://example.com/s/api/users/{USER_ID}/
 
 
 Database statistics
@@ -218,11 +218,11 @@ clicks.
 
 DEFINITION:
 
-    GET http://your-project-url.com/s/api/db-stats/
+    GET http://example.com/s/api/db-stats/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/db-stats/
+    curl http://example.com/s/api/db-stats/
 
 
 Statistics
@@ -239,11 +239,11 @@ Query Paramanters:
 
 DEFINITION:
 
-    GET http://your-project-url.com/s/api/stats/
+    GET http://example.com/s/api/stats/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/stats/
+    curl http://example.com/s/api/stats/
 
 
 Tinylink statistics
@@ -259,11 +259,11 @@ Query Parameters:
 
 DEFINITION:
 
-    GET http://your-project-url.com/s/api/url-stats/{SHORT_URL}/
+    GET http://example.com/s/api/url-stats/{SHORT_URL}/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/url-stats/{SHORT_URL}/
+    curl http://example.com/s/api/url-stats/{SHORT_URL}/
 
 Expanding tinylinks
 +++++++++++++++++++
@@ -278,11 +278,11 @@ Query Parameters:
 
 DEFINITION:
 
-    GET http://your-project-url.com/s/api/expand/{SHORT_URL}/
+    GET http://example.com/s/api/expand/{SHORT_URL}/
 
 EXAMPLE REQUEST:
 
-    curl http://your-project-url.com/s/api/expand{SHORT_URL}/
+    curl http://example.com/s/api/expand{SHORT_URL}/
 
 Contribute
 ----------
