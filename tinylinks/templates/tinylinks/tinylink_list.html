@@ -27,8 +27,8 @@
                 {% for link in object_list %}
                     <tr>
                         <td>{{ link.user }}</td>
-                        <td>{{ link.long_url }}</td>
-                        <td>{{ link.short_url }}</td>
+                        <td><a href="{{ link.long_url }}">{{ link.long_url }}</a></td>
+                        <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.short_url }}</a></td>
                         <td>{% if link.is_broken %}{% trans "Invalid" %}{% else %}{% trans "Valid" %}{% endif %}</td>
                         {% comment %}
                         <td>{% if link.is_broken %}{{ link.validation_error }}{% endif %}</td>
@@ -36,6 +36,8 @@
                         <td>{{ link.last_checked }}</td>
                         {% endcomment %}
                         <td>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank"><img src="http://icons.iconarchive.com/icons/danleech/simple/24/facebook-icon.png"></a>
+                            <a href="https://www.twitter.com/intent/tweet?url=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank"><img src="http://icons.iconarchive.com/icons/dakirby309/windows-8-metro/24/Web-Twitter-alt-2-Metro-icon.png"></a>
                             <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=link.id mode="change-long" %}">{% trans "Change Long URL" %}</a>
                             <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=link.id mode="change-short" %}">{% trans "Change Short URL" %}</a>
                             <a style="margin-right: 15px;" href="{% url "tinylink_delete" pk=link.id %}">{% trans "Delete" %}</a>

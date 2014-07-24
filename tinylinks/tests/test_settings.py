@@ -46,6 +46,11 @@ COVERAGE_MODULE_EXCLUDES = [
     'migrations', 'fixtures', 'admin$', 'django_extensions',
 ]
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+        'django.contrib.auth.context_processors.auth',
+        'django.core.context_processors.request'
+)
+
 EXTERNAL_APPS = [
     'django.contrib.admin',
     'django.contrib.admindocs',
