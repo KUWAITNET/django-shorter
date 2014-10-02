@@ -1,1 +1,3 @@
 A reusable Django app that adds a link shortener like bit.ly to your site.
+with API based on Django REST Framework.
+Analytics based on Piwik.
