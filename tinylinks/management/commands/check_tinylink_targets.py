@@ -23,6 +23,6 @@ class Command(BaseCommand):
         check_amount = (url_amount / (period / interval)) or 1
         for link in Tinylink.objects.order_by('last_checked')[:check_amount]:
             validate_long_url(link)
-        print('[' + timezone.now().strftime('%d.%m.%Y - %H:%M') +
+        print(('[' + timezone.now().strftime('%d.%m.%Y - %H:%M') +
               '] Checked ' + str(check_amount) + ' of ' + str(url_amount) +
-              ' total URLs.')
+              ' total URLs.'))

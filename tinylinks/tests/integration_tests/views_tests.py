@@ -1,7 +1,7 @@
 """Tests for the views of the ``django-tinylinks`` app."""
 from django.contrib.auth.models import Permission
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django_libs.tests.factories import UserFactory
 from django_libs.tests.mixins import ViewTestMixin

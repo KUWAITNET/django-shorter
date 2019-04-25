@@ -1,5 +1,5 @@
 """Tests for the models of the ``django-tinylinks`` app."""
-from urllib2 import urlopen, URLError
+from urllib.request import urlopen, URLError
 
 from django.test import TestCase
 from django.utils import timezone
@@ -10,6 +10,7 @@ from tinylinks.tests.factories import TinylinkFactory
 
 class TinylinkTestCase(TestCase):
     """Tests for the ``Tinylink`` model class."""
+
     def test_model(self):
         obj = TinylinkFactory()
         self.assertTrue(obj.pk)

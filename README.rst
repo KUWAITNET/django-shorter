@@ -14,11 +14,9 @@ Installation
 
 You need to install the following prerequisites in order to use this app::
 
-    pip install django==1.4.2
-    pip install South==0.7.6
-    pip install django-libs==0.8
-    pip install urllib3==1.5
-    pip install djangorestframework==2.3.13
+    pip install Django==2.2
+    pip install urllib3==1.25.1
+    pip install djangorestframework==3.9.2
 
 
 If you want to install the latest stable release from PyPi::
