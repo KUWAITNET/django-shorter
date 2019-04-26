@@ -38,7 +38,6 @@ DJANGO_APPS = [
 ]
 
 CUSTOM_APPS = [
-    'tinylinks.tests.test_app',
     'tinylinks',
 ]
 

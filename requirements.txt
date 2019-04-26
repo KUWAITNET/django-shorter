@@ -6,3 +6,9 @@
 django==2.2
 urllib3==1.25.1
 djangorestframework==3.9.2
+
+
+# ==============================================================
+# Packages needed for running the tests. Needed by contributors.
+# ==============================================================
+factory-boy==2.11.1

@@ -24,12 +24,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     tests_require=[
-        'fabric',
         'factory_boy',
-        'django-nose',
-        'coverage',
-        'django-coverage',
-        'selenium',
     ],
     test_suite='tinylinks.tests.runtests.runtests',
 )

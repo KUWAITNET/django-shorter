@@ -8,15 +8,10 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import re_path
 
-from tinylinks.tests.views import TestFailedRedirectView, TestRedirectView
-
-
 admin.autodiscover()
 
 
 urlpatterns = [
-    re_path(r'^redirect-test/', TestRedirectView.as_view()),
-    re_path(r'^redirect-fail/', TestFailedRedirectView.as_view()),
     re_path(r'^administration/', admin.site.urls),
     re_path(r'^s/', include('tinylinks.urls')),
 ]
