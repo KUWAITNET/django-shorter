@@ -16,17 +16,19 @@ class TinylinkAdmin(admin.ModelAdmin):
     form = TinylinkAdminForm
 
     fieldsets = [
-            ('Tinylink', {'fields': ['user', 'long_url', 'short_url',]}),
+        ('Tinylink', {'fields': ['user', 'long_url', 'short_url', ]}),
     ]
 
     def url_truncated(self, obj):
         return truncatechars(obj.long_url, 60)
+
     url_truncated.short_description = _('Long URL')
 
     def status(self, obj):
         if not obj.is_broken:
             return _('OK')
         return _('Link broken')
+
     status.short_description = _('Status')
 
 
@@ -37,5 +39,6 @@ class TinylinkLogAdmin(admin.ModelAdmin):
     list_display = ('tinylink', 'datetime', 'remote_ip', 'tracked')
     readonly_fields = ('datetime',)
     date_hierarchy = 'datetime'
+
 
 admin.site.register(TinylinkLog, TinylinkLogAdmin)

@@ -13,6 +13,7 @@ class TinylinkForm(forms.ModelForm):
     Creates and validates long and short URL version.
 
     """
+
     def __init__(self, user=None, mode='change-short', *args, **kwargs):
         """
         The Regex field validates the URL input. Allowed are only slugified
@@ -29,8 +30,8 @@ class TinylinkForm(forms.ModelForm):
         else:
             long_help_text = _("The long URL isn't editable at the moment.")
         self.fields['long_url'] = forms.URLField(
-            label=self.instance._meta.get_field_by_name(
-                'long_url')[0].verbose_name,
+            label=self.instance._meta.get_field(
+                'long_url').verbose_name,
             help_text=long_help_text,
         )
         if not self.instance.pk:
@@ -47,16 +48,17 @@ class TinylinkForm(forms.ModelForm):
                 self.fields['long_url'].widget.attrs['readonly'] = True
                 self.fields['short_url'] = forms.RegexField(
                     regex=r'^[a-z0-9]+$',
-                    error_message=(_("Please use only small letters and"
-                                     " digits.")),
-                    help_text=_("You can add a more readable short URL."),
-                    label=self.instance._meta.get_field_by_name(
-                        'short_url')[0].verbose_name,
+                    # error_message=(_("Please use only small letters and"
+                    #                  " digits.")),
+                    help_text=_("You can add a more readable short URL. Please use only small letters and"
+                                     " digits."),
+                    label=self.instance._meta.get_field(
+                        'short_url').verbose_name,
                 )
 
         # Style the form fields with Bootstrap 3
-        self.fields['long_url'].widget.attrs.update({'class' : 'form-control'})
-        self.fields['short_url'].widget.attrs.update({'class' : 'form-control'})
+        self.fields['long_url'].widget.attrs.update({'class': 'form-control'})
+        self.fields['short_url'].widget.attrs.update({'class': 'form-control'})
 
         self.user = user
 
@@ -116,6 +118,7 @@ class TinylinkAdminForm(forms.ModelForm):
     Creates and updates long and short URL versions in the Django Admin.
 
     """
+
     def __init__(self, *args, **kwargs):
         """The Regex field validates the URL input."""
         super(TinylinkAdminForm, self).__init__(*args, **kwargs)
@@ -126,10 +129,9 @@ class TinylinkAdminForm(forms.ModelForm):
         else:
             self.fields['short_url'] = forms.RegexField(
                 regex=r'^[a-z0-9]+$',
-                error_message=(_("Please use only small letters and digits.")),
-                help_text=_("You can add a more readable short URL."),
-                label=self.instance._meta.get_field_by_name(
-                    'short_url')[0].verbose_name,
+                # error_message=(_("Please use only small letters and digits.")),
+                help_text=_("You can add a more readable short URL. Please use only small letters and digits."),
+                label=self.instance._meta.get_field('short_url').verbose_name,
             )
 
     def clean(self):

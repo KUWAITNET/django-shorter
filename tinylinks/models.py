@@ -1,7 +1,7 @@
 """Models for the ``django-tinylinks`` app."""
-import urllib2
-from cookielib import CookieJar
-from socket import gaierror
+from urllib.request import build_opener, HTTPCookieProcessor, Request, urlopen
+from http.cookiejar import CookieJar
+import socket
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -12,7 +12,6 @@ from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
 
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-from django.utils.html import remove_tags
 
 
 def get_url_response(pool, link, url):
@@ -31,12 +30,12 @@ def get_url_response(pool, link, url):
         link.validation_error = _('Unicode error. Check URL characters.')
         return False
     try:
-        response = pool.urlopen('GET', url, retries=2, timeout=8.0)
+        response = pool.urlopen('GET', url.decode(), retries=2, timeout=8.0)
     except TimeoutError:
         link.validation_error = _('Timeout after 8 seconds.')
     except MaxRetryError:
         link.validation_error = _('Failed after retrying twice.')
-    except (HTTPError, gaierror):
+    except (HTTPError, socket.gaierror):
         link.validation_error = _('Not found.')
     return response
 
@@ -66,8 +65,8 @@ def validate_long_url(link):
                 # Seems like an infinite loop. Maybe the server is looking for
                 # a cookie?
                 cj = CookieJar()
-                opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-                request = urllib2.Request(response.get_redirect_location())
+                opener = build_opener(HTTPCookieProcessor(cj))
+                request = Request(response.get_redirect_location())
                 response = opener.open(request)
                 if response.code == 200:
                     link.is_broken = False
@@ -75,8 +74,8 @@ def validate_long_url(link):
         # Sometimes urllib3 repond with a 502er. Those pages might respond with
         # a 200er in the Browser, so re-check with urllib2
         try:
-            response = urllib2.urlopen(link.long_url, timeout=8.0)
-        except urllib2.HTTPError:
+            response = urlopen(link.long_url, timeout=8.0)
+        except HTTPError:
             link.validation_error = _("URL not accessible.")
         else:
             link.is_broken = False
@@ -105,6 +104,9 @@ class Tinylink(models.Model):
         'auth.User',
         verbose_name=_('Author'),
         related_name="tinylinks",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
     )
 
     long_url = models.CharField(
@@ -130,7 +132,7 @@ class Tinylink(models.Model):
     )
 
     last_checked = models.DateTimeField(
-        default=timezone.now(),
+        default=timezone.now,
         verbose_name=_('Last validation'),
     )
 
@@ -170,6 +172,9 @@ class TinylinkLog(models.Model):
     tinylink = models.ForeignKey(
         'Tinylink',
         verbose_name=_('Tinylink'),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
     )
 
     referrer = models.URLField(

@@ -11,7 +11,7 @@ try:
     from urllib import urlencode
 except ImportError:
     from urllib.parse import urlencode
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 CURRENT_DOMAIN = Site.objects.get_current().domain
 TRACK_OFFSET = 50
@@ -42,15 +42,15 @@ class Command(BaseCommand):
             visits.append(res)
         payload = {'requests': visits, 'token_auth': settings.PIWIK_TOKEN}
         #print payload
-        req = urllib2.Request(settings.PIWIK_URL)
+        req = urllib.request.Request(settings.PIWIK_URL)
         req.add_header('Content-Type', 'application/json')
-        response = urllib2.urlopen(req, json.dumps(payload))
-        print('Another %d views tracked well!' % TRACK_OFFSET)
+        response = urllib.request.urlopen(req, json.dumps(payload))
+        print(('Another %d views tracked well!' % TRACK_OFFSET))
         TinylinkLog.objects.filter(pk__in=views).update(tracked=True)
 
     def handle(self, *args, **options):
         num_visits = TinylinkLog.objects.filter(tracked=False).count()
-        print('Untracked views: %d' % num_visits)
+        print(('Untracked views: %d' % num_visits))
         if num_visits == 0:
             return
 

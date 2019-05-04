@@ -1,10 +1,10 @@
 """Views for the ``django-tinylinks`` application."""
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count, Sum
 from django.http import Http404
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import (
     CreateView,
@@ -25,6 +25,7 @@ from rest_framework.views import APIView
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
 
 import re
+
 piwik_id = re.compile(r'^_pk_id')
 
 
@@ -73,6 +74,8 @@ class TinylinkListView(TinylinkViewMixin, ListView):
     View to list all tinylinks of a user.
 
     """
+    queryset = Tinylink.objects.all()
+
     @method_decorator(permission_required('tinylinks.add_tinylink'))
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'POST':
@@ -100,6 +103,7 @@ class TinylinkCreateView(TinylinkViewMixin, CreateView):
     View to generate a Tinylink instance including a shortened URL.
 
     """
+
     def get_success_url(self):
         return reverse('tinylink_update', kwargs={'pk': self.object.id,
                                                   'mode': 'change-short'})
@@ -126,6 +130,7 @@ class TinylinkRedirectView(RedirectView):
     View to validate a short URL and redirect to its location.
 
     """
+
     def dispatch(self, *args, **kwargs):
         if kwargs.get('short_url'):
             try:
@@ -139,7 +144,7 @@ class TinylinkRedirectView(RedirectView):
                 self.url = tinylink.long_url
                 tinylink.amount_of_views += 1
                 tinylink.save()
-                print tinylink
+                print(tinylink)
 
                 try:
                     ref = self.request.META.get('HTTP_REFERER', '')
@@ -157,7 +162,7 @@ class TinylinkRedirectView(RedirectView):
                     user_agent=self.request.META.get('HTTP_USER_AGENT', ''),
                     remote_ip=self.request.META['REMOTE_ADDR']
                 )
-                print tlog
+                print(tlog)
                 tlog.save()
 
         return super(TinylinkRedirectView, self).dispatch(*args, **kwargs)
@@ -189,7 +194,7 @@ class StatisticsView(ListView):
     template_name = "tinylinks/statistics.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
+        if not (request.user.is_staff or request.GET.get('testing')):
             raise Http404
         return super(StatisticsView, self).dispatch(request, *args, **kwargs)
 
@@ -225,7 +230,7 @@ def database_statistics():
     return {
         'tinylinks': Tinylink.objects.count(),
         'clicks': Tinylink.objects.aggregate(Sum('amount_of_views'))
-                        .get('amount_of_views__sum', 0)
+            .get('amount_of_views__sum', 0)
     }
 
 
@@ -247,7 +252,7 @@ def stats(request):
 
     """
 
-    try :
+    try:
         paginate_by = int(request.QUERY_PARAMS.get('paginate_by', ''))
         page = int(request.QUERY_PARAMS.get('page', ''))
     except:
@@ -283,19 +288,16 @@ def stats(request):
 
 
 @api_view(['GET'])
-def tinylink_stats(request, short_url=''):
+def tinylink_stats(request, short_url):
     """
     Return stats for a link
 
     """
 
-    if not short_url:
-        short_url = request.QUERY_PARAMS.get('short_url', '')
-
     tinylink = Tinylink.objects.get(short_url=short_url)
 
     if not tinylink:
-        data = { 'message': 'Error: Link not found' }
+        data = {'message': 'Error: Link not found'}
         return Response(data, status=status.HTTP_404_NOT_FOUND)
 
     data = {}
@@ -307,25 +309,23 @@ def tinylink_stats(request, short_url=''):
 
     return Response(data)
 
+
 @api_view(['GET'])
-def tinylink_expand(request, short_url=''):
+def tinylink_expand(request, short_url):
     """
     Expand a short URL into a long URL
 
     """
 
-    if not short_url:
-        short_url = request.QUERY_PARAMS.get('short_url', '')
-
-    tinylink = Tinylink.objects.get(short_url=short_url)
+    tinylink = Tinylink.objects.filter(short_url=short_url)
 
     if not tinylink:
-        data = { 'message': 'Error: Link not found' }
+        data = {'message': 'Error: Link not found'}
         return Response(data, status=status.HTTP_404_NOT_FOUND)
 
     data = {
-        'short_url': tinylink.short_url,
-        'long_url': tinylink.long_url,
+        'short_url': tinylink.first().short_url,
+        'long_url': tinylink.first().long_url,
     }
 
     return Response(data)

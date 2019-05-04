@@ -19,8 +19,6 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS.append('south', )
-
 SECRET_KEY = 'ts4u!_y8xp!yvyxtvmk3046fxaoz_ubh4n2&qtsm&*z(-d(b07'
 
 PIWIK_ID = 1

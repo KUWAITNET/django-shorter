@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    tinylinks = serializers.PrimaryKeyRelatedField(many=True)
+    tinylinks = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
 
     class Meta:
         model = User
@@ -14,13 +14,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TinylinkSerializer(serializers.ModelSerializer):
-    user = serializers.Field(source='user.username')
 
     class Meta:
         model = Tinylink
         fields = ('id', 'user', 'long_url', 'short_url')
-                #'is_broken', 'validation_error',
-                #'last_checked', 'amount_of_views')
+        # 'is_broken', 'validation_error',
+        # 'last_checked', 'amount_of_views')
+
 
 """
 class TinylinkSerializer(serializers.Serializer):
@@ -58,6 +58,6 @@ class TinylinkSerializer(serializers.Serializer):
 """
 
 
-#class TinylinkLogSerializer(serializers.Serializer):
-    #pk = serializers.Field()
-    #tinylink = serializers
+# class TinylinkLogSerializer(serializers.Serializer):
+# pk = serializers.Field()
+# tinylink = serializers

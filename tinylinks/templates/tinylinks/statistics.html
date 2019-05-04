@@ -1,6 +1,5 @@
-{% extends "base.html" %}
-{% load i18n libs_tags %}
-{% load url from future %}
+{% extends "tinylinks/base.html" %}
+{% load i18n verbose_names %}
 
 {% block main %}
 <div class="container">
@@ -9,12 +8,12 @@
     <table class="table">
         <thead>
             <tr>
-                <td>{{ object_list.0|get_verbose:"user" }}</td>
-                <td>{{ object_list.0|get_verbose:"long_url" }}</td>
-                <td>{{ object_list.0|get_verbose:"short_url" }}</td>
-                <td>{{ object_list.0|get_verbose:"is_broken" }}</td>
-                <td>{{ object_list.0|get_verbose:"last_checked" }}</td>
-                <td>{{ object_list.0|get_verbose:"amount_of_views" }}</td>
+                <td>{% get_verbose_field_name object_list.0 "user" %}</td>
+                <td>{% get_verbose_field_name object_list.0 "long_url" %}</td>
+                <td>{% get_verbose_field_name object_list.0 "short_url" %}</td>
+                <td>{% get_verbose_field_name object_list.0 "is_broken" %}</td>
+                <td>{% get_verbose_field_name object_list.0 "last_checked" %}</td>
+                <td>{% get_verbose_field_name object_list.0 "amount_of_views" %}</td>
             </tr>
         </thead>
         <tbody>

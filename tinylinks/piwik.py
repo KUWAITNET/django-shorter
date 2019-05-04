@@ -5,14 +5,14 @@ import os
 
 
 def __get_random_string(length=500):
-        """
-        Return a random string
+    """
+    Return a random string
 
-        :param length: Length
-        :type length: inte
-        :rtype: str
-        """
-        return md5(os.urandom(length)).hexdigest()
+    :param length: Length
+    :type length: inte
+    :rtype: str
+    """
+    return md5(os.urandom(length)).hexdigest()
 
 
 def _get_random_visitor_id(id_length):
@@ -28,7 +28,8 @@ def _get_random_visitor_id(id_length):
 def parse_cookie(cookie):
     if cookie:
         cookie = cookie.split('.')
-        return {'_id': cookie[0], '_idts': cookie[1], '_idvc': int(cookie[2]), 'unknown': cookie[3], '_viewts': cookie[4]}
+        return {'_id': cookie[0], '_idts': cookie[1], '_idvc': int(cookie[2]), 'unknown': cookie[3],
+                '_viewts': cookie[4]}
     else:
         return {}
 
