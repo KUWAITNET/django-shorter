@@ -8,4 +8,4 @@ def shortify_url(url):
         obj = form.save()
         return obj.short_url
     else:
-        return form.errors.get('long_url')
+        return url
