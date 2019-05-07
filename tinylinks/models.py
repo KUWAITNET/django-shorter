@@ -2,16 +2,17 @@
 from urllib.request import build_opener, HTTPCookieProcessor, Request, urlopen
 from http.cookiejar import CookieJar
 import socket
-
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
 
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
+
+User = get_user_model()
 
 
 def get_url_response(pool, link, url):
@@ -101,7 +102,7 @@ class Tinylink(models.Model):
 
     """
     user = models.ForeignKey(
-        'auth.User',
+        User,
         verbose_name=_('Author'),
         related_name="tinylinks",
         null=True,
