@@ -1,9 +1,11 @@
-from .forms import ShortifyForm
+from .forms import TinylinkForm
 
 
-def shortify(url):
-    form = ShortifyForm({'long_url': url})
+def shortify_url(url):
+    data = {'data': {'long_url': url}, 'mode': None}
+    form = TinylinkForm(**data)
     if form.is_valid():
-        return form.cleaned_data.get('short_url')
+        obj = form.save()
+        return obj.short_url
     else:
-        return form.errors.get('long_url')
+        return url
