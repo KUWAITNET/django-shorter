@@ -25,17 +25,17 @@ If you want to install the latest stable release from PyPi::
 
 Add ``tinylinks`` to your ``INSTALLED_APPS``::
 
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
         ...,
         'tinylinks',
-    )
+    ]
 
 Add the ``tinylinks`` URLs to your ``urls.py``::
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         ...
-        url(r'^s/', include('tinylinks.urls')),
-    )
+        re_path(r'^s/', include('tinylinks.urls')),
+    ]
 
 Don't forget to migrate your database::
 
@@ -289,23 +289,19 @@ If you want to contribute to this project, please perform the following steps::
 
     # Fork this repository
     # Clone your fork
-    $ mkvirtualenv -p python2.7 django-tinylinks
+    $ mkvirtualenv -p python3.6 django-tinylinks
     $ pip install -r requirements.txt
-    $ ./tinylinks/tests/runtests.sh
+    $ ./manage.py test
     # You should get no failing tests
 
     $ git co -b feature_branch master
     # Implement your feature and tests
-    $ ./tinylinks/tests/runtests.sh
+    $ ./manage.py test
     # You should still get no failing tests
     # Describe your change in the CHANGELOG.txt
     $ git add . && git commit
     $ git push origin feature_branch
     # Send us a pull request for your feature branch
-
-Whenever you run the tests a coverage output will be generated in
-``tests/coverage/index.html``. When adding new features, please make sure that
-you keep the coverage at 100%.
 
 If you are making changes that need to be tested in a browser (i.e. to the
 CSS or JS files), you might want to setup a Django project, follow the

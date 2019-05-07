@@ -157,20 +157,3 @@ class TinylinkAdminForm(forms.ModelForm):
     class Meta:
         model = Tinylink
         fields = ('user', 'long_url', 'short_url')
-
-
-class ShortifyForm(forms.ModelForm):
-    long_url = forms.URLField(required=True)
-    short_url = forms.RegexField(regex=r'^[a-z0-9]+$', required=False)
-
-    def clean(self):
-        self.cleaned_data = super(ShortifyForm, self).clean()
-        # If short URL is occupied throw out an error, or fail silent.
-        slug = ''.join(random.choice('abcdefghijkmnpqrstuvwxyz123456789')
-                    for x in range(getattr(settings, 'TINYLINK_LENGTH', 6)))
-        self.cleaned_data.update({'short_url': slug})
-        return self.cleaned_data
-
-    class Meta:
-        model = Tinylink
-        fields = ('long_url', 'short_url',)

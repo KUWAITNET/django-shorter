@@ -1,8 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.forms import widgets
 from rest_framework import serializers
 from tinylinks.models import Tinylink, TinylinkLog
 from django.utils import timezone
-from django.contrib.auth.models import User
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):

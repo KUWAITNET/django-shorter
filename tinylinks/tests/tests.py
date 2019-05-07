@@ -1,11 +1,12 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from ..models import Tinylink, TinylinkLog
 from .factories import TinylinkFactory, UserFactory, TinyLogFactory
+User = get_user_model()
 
 
 class TinyLinkTest(APITestCase):

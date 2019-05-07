@@ -1,6 +1,6 @@
 """Views for the ``django-tinylinks`` application."""
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count, Sum
 from django.http import Http404
@@ -25,6 +25,8 @@ from rest_framework.views import APIView
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
 
 import re
+
+User = get_user_model()
 
 piwik_id = re.compile(r'^_pk_id')
 
