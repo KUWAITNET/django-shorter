@@ -146,7 +146,6 @@ class TinylinkRedirectView(RedirectView):
                 self.url = tinylink.long_url
                 tinylink.amount_of_views += 1
                 tinylink.save()
-                print(tinylink)
 
                 try:
                     ref = self.request.META.get('HTTP_REFERER', '')
@@ -164,7 +163,6 @@ class TinylinkRedirectView(RedirectView):
                     user_agent=self.request.META.get('HTTP_USER_AGENT', ''),
                     remote_ip=self.request.META['REMOTE_ADDR']
                 )
-                print(tlog)
                 tlog.save()
 
         return super(TinylinkRedirectView, self).dispatch(*args, **kwargs)
