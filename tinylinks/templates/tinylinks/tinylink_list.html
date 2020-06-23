@@ -13,6 +13,7 @@
                     <td>{% get_verbose_field_name object_list.0 "user" %}</td>
                     <td>{% get_verbose_field_name object_list.0 "long_url" %}</td>
                     <td>{% get_verbose_field_name object_list.0 "short_url" %}</td>
+                    <td style="width: 20%;">QR</td>
                     <td>{% get_verbose_field_name object_list.0 "is_broken" %}</td>
                     {% comment %}
                     <td>{{ object_list.0|get_verbose:"validation_error" }}</td>
@@ -28,6 +29,10 @@
                         <td>{{ link.user }}</td>
                         <td><a href="{{ link.long_url }}">{{ link.long_url }}</a></td>
                         <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.short_url }}</a></td>
+                        <td style="width: 20%;">
+                          <a href="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank">{{ link.short_url }}.qr</a>
+                          <img src="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" />
+                        </td>
                         <td>{% if link.is_broken %}{% trans "Invalid" %}{% else %}{% trans "Valid" %}{% endif %}</td>
                         {% comment %}
                         <td>{% if link.is_broken %}{{ link.validation_error }}{% endif %}</td>
@@ -37,6 +42,7 @@
                         <td>
                             <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank"><img src="http://icons.iconarchive.com/icons/danleech/simple/24/facebook-icon.png"></a>
                             <a href="https://www.twitter.com/intent/tweet?url=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank"><img src="http://icons.iconarchive.com/icons/dakirby309/windows-8-metro/24/Web-Twitter-alt-2-Metro-icon.png"></a>
+                            <a href="https://web.whatsapp.com/send?text={{ 'https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://' | urlencode:""}}{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" data-action="share/whatsapp/share" target="_blank"><img src="http://icons.iconarchive.com/icons/limav/flat-gradient-social/24/Whatsapp-icon.png"></a>
                             <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=link.id mode="change-long" %}">{% trans "Change Long URL" %}</a>
                             <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=link.id mode="change-short" %}">{% trans "Change Short URL" %}</a>
                             <a style="margin-right: 15px;" href="{% url "tinylink_delete" pk=link.id %}">{% trans "Delete" %}</a>
