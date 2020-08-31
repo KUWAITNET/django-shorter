@@ -125,7 +125,7 @@ class TinyLinkTest(APITestCase):
         print("Testing: Completed")
 
 
-class TinylinkViewTest(APITestCase):
+class TinylinkRestViewTest(APITestCase):
     def setUp(self):
         super(TinylinkViewTest, self).setUp()
         self.user = User.objects.create_superuser(
