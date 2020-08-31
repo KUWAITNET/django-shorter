@@ -10,7 +10,6 @@ from ..models import Tinylink, TinylinkLog
 from .factories import TinylinkFactory, UserFactory, TinyLogFactory
 
 User = get_user_model()
-from django.contrib.auth.models import AnonymousUser
 
 
 class TinyLinkTest(APITestCase):
@@ -160,8 +159,8 @@ class TinylinkRestViewTest(APITestCase):
     def test_authenticated_admin_create_link(self):
         self.query_parameter = "https://soundcloud.com/discover"
         self.client.force_authenticate(user=self.user)
-        tiny_link_list_response = self.client.post(
+        tiny_link_create_response = self.client.post(
             "/s/api/tinylinks/", {"long_url": self.query_parameter}, format="json"
         )
         print("\nTesting:\nTiny Link create One Link")
-        self.assertEqual(tiny_link_list_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(tiny_link_create_response.status_code, status.HTTP_201_CREATED)
