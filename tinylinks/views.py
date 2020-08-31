@@ -19,10 +19,15 @@ from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
+
+from django.shortcuts import get_list_or_404
+from django.db.models import Q
+from django.utils.crypto import get_random_string
 
 import re
 
@@ -206,11 +211,30 @@ class TinylinkViewSet(viewsets.ModelViewSet):
     """
     queryset = Tinylink.objects.all()
     serializer_class = TinylinkSerializer
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    authentication_classes = (BasicAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def pre_save(self, obj):
         obj.user = self.request.user
+
+    def get_queryset(self):
+        requestURL = self.request.GET.get('url',None)
+        if not requestURL and self.request.user.is_staff:
+            return Tinylink.objects.all() 
+        elif not requestURL and not self.request.user.is_staff:
+            return Tinylink.objects.filter(user=self.request.user) 
+
+        queryData =get_list_or_404(Tinylink,Q(short_url=requestURL)|Q(long_url=requestURL))
+        return queryData
+
+    def create(self, request, *args, **kwargs):
+        request.data['short_url']=get_random_string(6)
+        request.data['user'] = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
