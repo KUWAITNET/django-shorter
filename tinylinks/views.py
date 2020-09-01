@@ -248,8 +248,14 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        data = {
+            "id":serializer.data['id'],
+            "short_url":request.build_absolute_uri('/s/%s'%serializer.data['short_url']),
+            "long_url":serializer.data['long_url']
+            }
+
         return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            data, status=status.HTTP_201_CREATED, headers=headers
         )
 
 
