@@ -230,16 +230,16 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         obj.user = self.request.user
 
     def get_queryset(self):
-        requestURL = self.request.GET.get("url", None)
-        if not requestURL and self.request.user.is_staff:
+        request_url = self.request.GET.get("url", None)
+        if not request_url and self.request.user.is_staff:
             return Tinylink.objects.all()
-        elif not requestURL and not self.request.user.is_staff:
+        elif not request_url and not self.request.user.is_staff:
             return Tinylink.objects.filter(user=self.request.user)
 
-        queryData = get_list_or_404(
-            Tinylink, Q(short_url=requestURL) | Q(long_url=requestURL)
+        query_data = get_list_or_404(
+            Tinylink, Q(short_url=request_url) | Q(long_url=request_url)
         )
-        return queryData
+        return query_data
 
     def create(self, request, *args, **kwargs):
         request.data["short_url"] = get_random_string(6)
