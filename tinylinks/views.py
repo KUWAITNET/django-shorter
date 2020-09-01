@@ -19,7 +19,6 @@ from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
