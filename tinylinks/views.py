@@ -19,6 +19,7 @@ from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -220,23 +221,26 @@ class TinylinkViewSet(viewsets.ModelViewSet):
 
     queryset = Tinylink.objects.all()
     serializer_class = TinylinkSerializer
-    authentication_classes = (BasicAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (
+        SessionAuthentication,
+        BasicAuthentication,
+    )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def pre_save(self, obj):
         obj.user = self.request.user
 
     def get_queryset(self):
-        request_url = self.request.GET.get("url", None)
-        if not request_url and self.request.user.is_staff:
+        requestURL = self.request.GET.get("url", None)
+        if not requestURL and self.request.user.is_staff:
             return Tinylink.objects.all()
-        elif not request_url and not self.request.user.is_staff:
+        elif not requestURL and not self.request.user.is_staff:
             return Tinylink.objects.filter(user=self.request.user)
 
-        query_data = get_list_or_404(
-            Tinylink, Q(short_url=request_url) | Q(long_url=request_url)
+        queryData = get_list_or_404(
+            Tinylink, Q(short_url=requestURL) | Q(long_url=requestURL)
         )
-        return query_data
+        return queryData
 
     def create(self, request, *args, **kwargs):
         request.data["short_url"] = get_random_string(6)
