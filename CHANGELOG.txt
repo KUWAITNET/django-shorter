@@ -1,5 +1,9 @@
 === (ongoing) ===
 
+
+=== 0.6.1 ===
+* Fixed Tinylinks restful API 
+
 === 0.6 ===
 
 * Project got forked by KuwaitNET
