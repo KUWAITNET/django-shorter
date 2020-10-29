@@ -126,6 +126,7 @@ class TinyLinkTest(APITestCase):
 
 class TinylinkRestViewTest(APITestCase):
     def setUp(self):
+        super(TinylinkRestViewTest)
         self.user = User.objects.create_superuser(
             username="gerges",
             email="gerges_test@kuwaitnet.com",
