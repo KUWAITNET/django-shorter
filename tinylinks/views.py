@@ -224,7 +224,7 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         SessionAuthentication,
         BasicAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def pre_save(self, obj):
         obj.user = self.request.user

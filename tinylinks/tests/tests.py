@@ -153,7 +153,7 @@ class TinylinkRestViewTest(APITestCase):
             "\nTesting:\nTiny Link List Links : user.is_admin=False & user in not authenticated"
         )
         self.assertEqual(
-            tiny_link_list_response.status_code, status.HTTP_401_UNAUTHORIZED
+            tiny_link_list_response.status_code, status.HTTP_403_FORBIDDEN
         )
 
     def test_authenticated_admin_create_link(self):
