@@ -1,18 +1,22 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 from django.utils.crypto import get_random_string
 from rest_framework import serializers
 from tinylinks.models import Tinylink, TinylinkLog
 from django.utils import timezone
+
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    tinylinks = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    tinylinks = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all()
+    )
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'tinylinks')
+        fields = ("id", "username", "tinylinks")
 
 
 class TinylinkSerializer(serializers.ModelSerializer):
@@ -21,11 +25,13 @@ class TinylinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tinylink
-        fields = ('id', 'user', 'long_url', 'short_url')
+        fields = ("id", "user", "long_url", "short_url")
 
     def create(self, validated_data):
-        validated_data["user"] = self.context['request'].user
-        validated_data["short_url"] = get_random_string(6)
+        validated_data["user"] = self.context["request"].user
+        validated_data["short_url"] = get_random_string(
+            getattr(settings, "TINYLINK_LENGTH", 6)
+        )
         instance = super().create(validated_data)
         return instance
 
