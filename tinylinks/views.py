@@ -13,6 +13,7 @@ from django.views.generic import (
     RedirectView,
     UpdateView,
 )
+from rest_framework.decorators import permission_classes
 
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
@@ -267,6 +268,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 def database_statistics():
@@ -283,6 +285,7 @@ def database_statistics():
 
 
 @api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated,])
 def db_stats(request):
     """
     Total number of tinylinks and sum of clicks
@@ -294,6 +297,7 @@ def db_stats(request):
 
 
 @api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated,])
 def stats(request):
     """
     Stats about tinylinks
@@ -336,6 +340,7 @@ def stats(request):
 
 
 @api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated,])
 def tinylink_stats(request, short_url):
     """
     Return stats for a link
