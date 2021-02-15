@@ -28,10 +28,19 @@ class TinylinkSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "long_url", "short_url")
 
     def create(self, validated_data):
-        validated_data["user"] = self.context["request"].user
-        validated_data["short_url"] = get_random_string(
-            getattr(settings, "TINYLINK_LENGTH", 6)
+        user = self.context["request"].user
+        brothers = Tinylink.objects.filter(
+            long_url=validated_data["long_url"], user=user
         )
+        if brothers:
+            return brothers[0]
+
+        slug = None
+        while not slug or Tinylink.objects.filter(short_url=slug):
+            slug = get_random_string(getattr(settings, "TINYLINK_LENGTH", 6))
+
+        validated_data["user"] = user
+        validated_data["short_url"] = slug
         instance = super().create(validated_data)
         return instance
 
