@@ -246,13 +246,11 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         data = {
             "id": instance.id,
-            "short_url": request.build_absolute_uri('/s/%s' % instance.short_url),
-            "long_url": instance.long_url
+            "short_url": request.build_absolute_uri("%s" % instance.short_url),
+            "long_url": instance.long_url,
         }
 
-        return Response(
-            data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -280,7 +278,11 @@ def database_statistics():
 
 
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated,])
+@permission_classes(
+    [
+        permissions.IsAuthenticated,
+    ]
+)
 def db_stats(request):
     """
     Total number of tinylinks and sum of clicks
@@ -292,7 +294,11 @@ def db_stats(request):
 
 
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated,])
+@permission_classes(
+    [
+        permissions.IsAuthenticated,
+    ]
+)
 def stats(request):
     """
     Stats about tinylinks
@@ -335,7 +341,11 @@ def stats(request):
 
 
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated,])
+@permission_classes(
+    [
+        permissions.IsAuthenticated,
+    ]
+)
 def tinylink_stats(request, short_url):
     """
     Return stats for a link

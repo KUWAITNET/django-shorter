@@ -21,83 +21,51 @@ from tinylinks.views import (
 
 # Create router and register our API viewsets with it.
 router = DefaultRouter()
-router.register(r'tinylinks', TinylinkViewSet)
-router.register(r'users', UserViewSet)
+router.register(r"tinylinks", TinylinkViewSet)
+router.register(r"users", UserViewSet)
 
 urlpatterns = [
+    re_path(r"^list/$", TinylinkListView.as_view(), name="tinylink_list"),
+    re_path(r"^create/$", TinylinkCreateView.as_view(), name="tinylink_create"),
     re_path(
-        r'^$',
-        TinylinkListView.as_view(),
-        name='tinylink_list'
-    ),
-
-    re_path(
-        r'^create/$',
-        TinylinkCreateView.as_view(),
-        name='tinylink_create'
-    ),
-
-    re_path(
-        r'^update/(?P<pk>\d+)/(?P<mode>[a-z-]+)/$',
+        r"^update/(?P<pk>\d+)/(?P<mode>[a-z-]+)/$",
         TinylinkUpdateView.as_view(),
-        name='tinylink_update',
+        name="tinylink_update",
     ),
-
     re_path(
-        r'^delete/(?P<pk>\d+)/$',
+        r"^delete/(?P<pk>\d+)/$",
         TinylinkDeleteView.as_view(),
-        name='tinylink_delete',
+        name="tinylink_delete",
     ),
-
     re_path(
-        r'^404/$',
-        TemplateView.as_view(template_name='tinylinks/notfound.html'),
-        name='tinylink_notfound',
+        r"^404/$",
+        TemplateView.as_view(template_name="tinylinks/notfound.html"),
+        name="tinylink_notfound",
     ),
-
     re_path(
-        r'^statistics/?$',
+        r"^statistics/?$",
         StatisticsView.as_view(),
-        name='tinylink_statistics',
+        name="tinylink_statistics",
     ),
-
     re_path(
-        r'^(?P<short_url>[a-zA-Z0-9-]+)/?$',
+        r"^(?P<short_url>[a-zA-Z0-9-]+)/?$",
         TinylinkRedirectView.as_view(),
-        name='tinylink_redirect',
+        name="tinylink_redirect",
     ),
-
     re_path(
-        r'^api/',
+        r"^api/",
         include(router.urls),
     ),
-
     re_path(
-        r'^auth/',
-        include('rest_framework.urls', namespace='rest_framework'),
+        r"^auth/",
+        include("rest_framework.urls", namespace="rest_framework"),
     ),
-
+    re_path(r"^api/db-stats/$", db_stats, name="api_db_stats"),
+    re_path(r"^api/stats/$", stats, name="api_stats"),
     re_path(
-        r'^api/db-stats/$',
-        db_stats,
-        name='api_db_stats'
+        r"^api/url-stats/(?P<short_url>\w+)/", tinylink_stats, name="api_url_stats"
     ),
-
     re_path(
-        r'^api/stats/$',
-        stats,
-        name='api_stats'
-    ),
-
-    re_path(
-        r'^api/url-stats/(?P<short_url>\w+)/',
-        tinylink_stats,
-        name='api_url_stats'
-    ),
-
-    re_path(
-        r'^api/expand/(?P<short_url>\w+)/$',
-        tinylink_expand,
-        name='api_tinylink_expand'
+        r"^api/expand/(?P<short_url>\w+)/$", tinylink_expand, name="api_tinylink_expand"
     ),
 ]
