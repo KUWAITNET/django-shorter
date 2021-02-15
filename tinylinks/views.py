@@ -13,6 +13,7 @@ from django.views.generic import (
     RedirectView,
     UpdateView,
 )
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import permission_classes
 
 from tinylinks.forms import TinylinkForm
@@ -222,6 +223,7 @@ class TinylinkViewSet(viewsets.ModelViewSet):
     queryset = Tinylink.objects.all()
     serializer_class = TinylinkSerializer
     authentication_classes = (
+        TokenAuthentication,
         SessionAuthentication,
         BasicAuthentication,
     )
