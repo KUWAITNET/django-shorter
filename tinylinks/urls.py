@@ -1,6 +1,8 @@
 """URLs for the ``django-tinylinks`` app."""
+from django.conf import settings
 from django.conf.urls import include
-from django.urls import path, re_path
+from django.urls import re_path
+from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 
@@ -37,20 +39,30 @@ urlpatterns = [
         TinylinkDeleteView.as_view(),
         name="tinylink_delete",
     ),
-    re_path(
-        r"^404/$",
-        TemplateView.as_view(template_name="tinylinks/notfound.html"),
-        name="tinylink_notfound",
-    ),
+]
+
+if getattr(settings, "TINYLINK_REDIRECT_404", None):
+    urlpatterns += [
+        re_path(
+            r"^404/$",
+            RedirectView.as_view(permanent=False, url=settings.TINYLINK_REDIRECT_404),
+            name="tinylink_notfound",
+        ),
+    ]
+else:
+    urlpatterns += [
+        re_path(
+            r"^404/$",
+            TemplateView.as_view(template_name="tinylinks/notfound.html"),
+            name="tinylink_notfound",
+        ),
+    ]
+
+urlpatterns += [
     re_path(
         r"^statistics/?$",
         StatisticsView.as_view(),
         name="tinylink_statistics",
-    ),
-    re_path(
-        r"^(?P<short_url>[a-zA-Z0-9-]+)/?$",
-        TinylinkRedirectView.as_view(),
-        name="tinylink_redirect",
     ),
     re_path(
         r"^api/",
@@ -67,5 +79,10 @@ urlpatterns = [
     ),
     re_path(
         r"^api/expand/(?P<short_url>\w+)/$", tinylink_expand, name="api_tinylink_expand"
+    ),
+    re_path(
+        r"^(?P<short_url>[a-zA-Z0-9-]+)/?$",
+        TinylinkRedirectView.as_view(),
+        name="tinylink_redirect",
     ),
 ]
