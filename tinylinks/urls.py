@@ -23,7 +23,9 @@ from tinylinks.views import (
 
 # Create router and register our API viewsets with it.
 router = DefaultRouter()
-router.register(r"tinylinks", TinylinkViewSet)
+router.register(
+    r"{}".format(getattr(settings, "TINYLINK_API_PREFIX", "tinylinks")), TinylinkViewSet
+)
 router.register(r"users", UserViewSet)
 
 urlpatterns = [
