@@ -227,9 +227,6 @@ class TinylinkViewSet(viewsets.ModelViewSet):
     )
     permission_classes = (permissions.IsAuthenticated,)
 
-    def pre_save(self, obj):
-        obj.user = self.request.user
-
     def get_queryset(self):
         request_url = self.request.GET.get("url", None)
         if not request_url and self.request.user.is_staff:
@@ -243,17 +240,15 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         return query_data
 
     def create(self, request, *args, **kwargs):
-        request.data["short_url"] = get_random_string(6)
-        request.data["user"] = request.user.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        instance = self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         data = {
-            "id":serializer.data['id'],
-            "short_url":request.build_absolute_uri('/s/%s'%serializer.data['short_url']),
-            "long_url":serializer.data['long_url']
-            }
+            "id": instance.id,
+            "short_url": request.build_absolute_uri('/s/%s' % instance.short_url),
+            "long_url": instance.long_url
+        }
 
         return Response(
             data, status=status.HTTP_201_CREATED, headers=headers
