@@ -4,7 +4,7 @@ from django.conf.urls import include
 from django.urls import re_path
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter, SimpleRouter
 
 from tinylinks.views import (
     StatisticsView,
@@ -19,10 +19,12 @@ from tinylinks.views import (
     stats,
     tinylink_stats,
     tinylink_expand,
+    DefaultRouterAPIView,
 )
 
 # Create router and register our API viewsets with it.
 router = DefaultRouter()
+router.APIRootView = DefaultRouterAPIView
 router.register(
     r"{}".format(getattr(settings, "TINYLINK_API_PREFIX", "tinylinks")), TinylinkViewSet
 )

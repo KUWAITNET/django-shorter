@@ -15,6 +15,7 @@ from django.views.generic import (
 )
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import permission_classes
+from rest_framework.routers import APIRootView
 
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
@@ -264,6 +265,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class DefaultRouterAPIView(APIRootView):
+
+
+    def get(self, request, *args, **kwargs):
+        return Response({})
 
 
 def database_statistics():
