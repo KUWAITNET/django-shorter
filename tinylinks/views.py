@@ -267,7 +267,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class DefaultRouterAPIView(APIRootView):
+class CustomDefaultRouterAPIView(APIRootView):
 
 
     def get(self, request, *args, **kwargs):
