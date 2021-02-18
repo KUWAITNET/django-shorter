@@ -390,7 +390,7 @@ def tinylink_expand(request, short_url):
         return Response(data, status=status.HTTP_404_NOT_FOUND)
 
     data = {
-        "short_url": tinylink.first().get_short_url,
+        "short_url": tinylink.first().short_url,
         "long_url": tinylink.first().long_url,
     }
 
