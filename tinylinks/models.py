@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
+from django.conf import settings
 
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -87,6 +88,10 @@ def validate_long_url(link):
     return link
 
 
+def get_short_url(link: str) -> str:
+    return "{}".format(getattr(settings, "SHORT_URL_PREFIX", "shorturl/")) + link
+
+
 class Tinylink(models.Model):
     """
     Model to 'translate' long URLs into small ones.
@@ -163,6 +168,10 @@ class Tinylink(models.Model):
         if self.last_checked < timezone.now() - timezone.timedelta(minutes=60):
             return True
         return False
+
+    def save(self, *args, **kwargs):
+        self.short_url = get_short_url(self.short_url)
+        return super(Tinylink, self).save(*args, **kwargs)
 
 
 class TinylinkLog(models.Model):

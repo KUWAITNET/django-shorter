@@ -1,7 +1,4 @@
-from rest_framework.routers import DefaultRouter
-
 from .forms import TinylinkForm
-from .views import CustomDefaultRouterAPIView
 
 
 def shortify_url(url):
@@ -13,5 +10,3 @@ def shortify_url(url):
     else:
         return url
 
-class CustomDefaultRouter(DefaultRouter):
-    APIRootView = CustomDefaultRouterAPIView
