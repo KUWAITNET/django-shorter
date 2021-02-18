@@ -268,8 +268,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CustomDefaultRouterAPIView(APIRootView):
-
-
     def get(self, request, *args, **kwargs):
         return Response({})
 
