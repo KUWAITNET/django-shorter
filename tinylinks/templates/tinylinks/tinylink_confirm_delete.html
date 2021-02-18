@@ -6,7 +6,7 @@
 <h1>{% trans "Delete tinylink" %} <em>{{ object.short_prefixed_url }} that points to {{ object.long_url }}</em></h1>
 <form action="." method="post">
     {% csrf_token %}
-    <p>{% trans "Do you really want to delete this tinylink" %} <em>{{ object.short_prefixed_url }}</em>?</p>
+    <p>{% trans "Do you really want to delete this tinylink" %} <em>{{ object.get_short_url }}</em>?</p>
     <input type="submit" value="{% trans "Delete" %}"/>
     <a href="{% url "tinylink_list" %}">{% trans "or Back" %}</a>
 </form>

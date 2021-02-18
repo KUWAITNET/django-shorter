@@ -88,8 +88,6 @@ def validate_long_url(link):
     return link
 
 
-def get_short_url(link: str) -> str:
-    return "{}".format(getattr(settings, "SHORT_URL_PREFIX", "shorturl/")) + link
 
 
 class Tinylink(models.Model):
@@ -153,9 +151,9 @@ class Tinylink(models.Model):
         default='',
     )
 
-    @property
-    def short_prefixed_url(self):
-        return get_short_url(str(self.short_url))
+    def get_short_url(self) -> str:
+        return "{}".format(
+            getattr(settings, "SHORT_URL_PREFIX", "shorturl/")) + str(self.short_url)
 
     def __unicode__(self):
         return self.short_prefixed_url
