@@ -153,8 +153,12 @@ class Tinylink(models.Model):
         default='',
     )
 
+    @property
+    def short_prefixed_url(self):
+        return get_short_url(str(self.short_url))
+
     def __unicode__(self):
-        return self.short_url
+        return self.short_prefixed_url
 
     class Meta:
         ordering = ['-id']
@@ -169,9 +173,7 @@ class Tinylink(models.Model):
             return True
         return False
 
-    def save(self, *args, **kwargs):
-        self.short_url = get_short_url(self.short_url)
-        return super(Tinylink, self).save(*args, **kwargs)
+
 
 
 class TinylinkLog(models.Model):
