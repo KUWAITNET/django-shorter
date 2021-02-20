@@ -84,7 +84,8 @@ urlpatterns += [
         r"^api/expand/(?P<short_url>\w+)/$", tinylink_expand, name="api_tinylink_expand"
     ),
     re_path(
-        r"^(?P<short_url>[a-zA-Z0-9-]+)/?$",
+        r"^{}/".format(getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "prefix"))
+        + r"(?P<short_url>[a-zA-Z0-9-]+)/?$",
         TinylinkRedirectView.as_view(),
         name="tinylink_redirect",
     ),

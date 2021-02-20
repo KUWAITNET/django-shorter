@@ -28,9 +28,10 @@
                     <tr>
                         <td>{{ link.user }}</td>
                         <td><a href="{{ link.long_url }}">{{ link.long_url }}</a></td>
-                        <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.short_url }}</a></td>
+                        <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.get_short_url }}</a></td>
+                        <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.get_short_url }}</a></td>
                         <td style="width: 20%;">
-                          <a href="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank">{{ link.short_url }}.qr</a>
+                          <a href="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank">{{ link.get_short_url }}.qr</a>
                           <img src="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" />
                         </td>
                         <td>{% if link.is_broken %}{% trans "Invalid" %}{% else %}{% trans "Valid" %}{% endif %}</td>

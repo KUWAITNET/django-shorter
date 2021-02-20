@@ -2,6 +2,8 @@
 from urllib.request import build_opener, HTTPCookieProcessor, Request, urlopen
 from http.cookiejar import CookieJar
 import socket
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -147,6 +149,10 @@ class Tinylink(models.Model):
         verbose_name=_('Redirect location'),
         default='',
     )
+
+    def get_short_url(self) -> str:
+        return r"{}/".format(getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "prefix")) \
+               + str(self.short_url)
 
     def __unicode__(self):
         return self.short_url

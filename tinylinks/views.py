@@ -148,6 +148,7 @@ class TinylinkRedirectView(RedirectView):
     """
 
     def dispatch(self, *args, **kwargs):
+        print("in dispatch")
         if kwargs.get("short_url"):
             try:
                 tinylink = Tinylink.objects.get(short_url=kwargs.get("short_url"))
