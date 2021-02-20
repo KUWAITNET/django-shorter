@@ -8,3 +8,7 @@ db.sqlite
 dist/
 static/
 .idea/
+.venv/
+.venv
+.env/
+.env
