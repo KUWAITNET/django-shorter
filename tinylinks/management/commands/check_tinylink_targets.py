@@ -9,7 +9,6 @@ After one period, all URLs should be checked for their availability.
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-
 from tinylinks.models import Tinylink, validate_long_url
 
 
@@ -25,13 +24,11 @@ class Command(BaseCommand):
         for link in Tinylink.objects.order_by("last_checked")[:check_amount]:
             validate_long_url(link)
         print(
-            (
-                "["
-                + timezone.now().strftime("%d.%m.%Y - %H:%M")
-                + "] Checked "
-                + str(check_amount)
-                + " of "
-                + str(url_amount)
-                + " total URLs."
-            )
+            "["
+            + timezone.now().strftime("%d.%m.%Y - %H:%M")
+            + "] Checked "
+            + str(check_amount)
+            + " of "
+            + str(url_amount)
+            + " total URLs."
         )

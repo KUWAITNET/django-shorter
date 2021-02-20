@@ -1,5 +1,7 @@
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
+
 import tinylinks
 
 
@@ -23,8 +25,6 @@ setup(
     url="https://github.com/bitmazk/django-tinylinks",
     packages=find_packages(),
     include_package_data=True,
-    tests_require=[
-        "factory_boy",
-    ],
+    tests_require=["factory_boy",],
     test_suite="tinylinks.tests.runtests.runtests",
 )

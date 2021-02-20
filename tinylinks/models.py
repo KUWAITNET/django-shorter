@@ -1,18 +1,15 @@
 """Models for the ``django-tinylinks`` app."""
-from urllib.request import build_opener, HTTPCookieProcessor, Request, urlopen
-from http.cookiejar import CookieJar
 import socket
+from http.cookiejar import CookieJar
+from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
-
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 
 User = get_user_model()
 
@@ -113,42 +110,28 @@ class Tinylink(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    long_url = models.CharField(
-        max_length=2500,
-        verbose_name=_("Long URL"),
-    )
+    long_url = models.CharField(max_length=2500, verbose_name=_("Long URL"),)
 
     short_url = models.CharField(
-        max_length=32,
-        verbose_name=_("Short URL"),
-        unique=True,
+        max_length=32, verbose_name=_("Short URL"), unique=True,
     )
 
-    is_broken = models.BooleanField(
-        default=False,
-        verbose_name=_("Status"),
-    )
+    is_broken = models.BooleanField(default=False, verbose_name=_("Status"),)
 
     validation_error = models.CharField(
-        max_length=100,
-        verbose_name=_("Validation Error"),
-        default="",
+        max_length=100, verbose_name=_("Validation Error"), default="",
     )
 
     last_checked = models.DateTimeField(
-        default=timezone.now,
-        verbose_name=_("Last validation"),
+        default=timezone.now, verbose_name=_("Last validation"),
     )
 
     amount_of_views = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Amount of views"),
+        default=0, verbose_name=_("Amount of views"),
     )
 
     redirect_location = models.CharField(
-        max_length=2500,
-        verbose_name=_("Redirect location"),
-        default="",
+        max_length=2500, verbose_name=_("Redirect location"), default="",
     )
 
     def get_short_url(self) -> str:
@@ -187,18 +170,11 @@ class TinylinkLog(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    referrer = models.URLField(
-        blank=True,
-        max_length=512,
-    )
+    referrer = models.URLField(blank=True, max_length=512,)
 
     user_agent = models.TextField()
 
-    cookie = models.CharField(
-        max_length=127,
-        blank=True,
-        default="",
-    )
+    cookie = models.CharField(max_length=127, blank=True, default="",)
 
     remote_ip = models.GenericIPAddressField()
 

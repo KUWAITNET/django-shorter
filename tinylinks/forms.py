@@ -4,7 +4,6 @@ import random
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-
 from tinylinks.models import Tinylink, validate_long_url
 
 
@@ -51,7 +50,8 @@ class TinylinkForm(forms.ModelForm):
                     # error_message=(_("Please use only small letters and"
                     #                  " digits.")),
                     help_text=_(
-                        "You can add a more readable short URL. Please use only small letters and"
+                        "You can add a more readable short URL. Please use only"
+                        " small letters and"
                         " digits."
                     ),
                     label=self.instance._meta.get_field("short_url").verbose_name,
@@ -132,7 +132,8 @@ class TinylinkAdminForm(forms.ModelForm):
                 regex=r"^[a-z0-9]+$",
                 # error_message=(_("Please use only small letters and digits.")),
                 help_text=_(
-                    "You can add a more readable short URL. Please use only small letters and digits."
+                    "You can add a more readable short URL."
+                    "Please use only small letters and digits."
                 ),
                 label=self.instance._meta.get_field("short_url").verbose_name,
             )
@@ -141,9 +142,7 @@ class TinylinkAdminForm(forms.ModelForm):
         self.cleaned_data = super(TinylinkAdminForm, self).clean()
         # If short URL is occupied throw out an error, or fail silent.
         try:
-            twin = Tinylink.objects.get(
-                short_url=self.cleaned_data.get("short_url"),
-            )
+            twin = Tinylink.objects.get(short_url=self.cleaned_data.get("short_url"),)
         except Tinylink.DoesNotExist:
             slug = self.cleaned_data.get("short_url")
             while not slug or Tinylink.objects.filter(short_url=slug):

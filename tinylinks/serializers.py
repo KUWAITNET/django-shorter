@@ -1,10 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.forms import widgets
 from django.utils.crypto import get_random_string
 from rest_framework import serializers
-from tinylinks.models import Tinylink, TinylinkLog
-from django.utils import timezone
+from tinylinks.models import Tinylink
 
 User = get_user_model()
 
@@ -45,40 +43,41 @@ class TinylinkSerializer(serializers.ModelSerializer):
         return instance
 
 
-"""
-class TinylinkSerializer(serializers.Serializer):
-    pk = serializers.Field()  # Note: `Field` is an untyped read-only field.
-    #user = serializers.PrimaryKeyRelatedField()
-    user = serializers.Field(source='user.username')
-    long_url = serializers.CharField(max_length=2500)
-    short_url = serializers.CharField(required=False, max_length=32)
-    is_broken = serializers.BooleanField(required=False)
-    validation_error = serializers.CharField(max_length=100,
-            required=False, default='')
-    last_checked = serializers.DateTimeField(default=timezone.now(),
-            required=False)
-    amount_of_views = serializers.IntegerField(default=0)
-
-    def restore_object(self, attrs, instance=None):
-        #Create or update a new tinylink instance, given a dictionary
-        #of deserialized field values.
-
-        #Note that if we don't define this method, then deserializing
-        #data will simply return a dictionary of items.
-        if instance:
-            # Update existing instance
-            #instance.user = attrs.get('user', instance.user)
-            instance.long_url = attrs.get('long_url', instance.long_url)
-            instance.short_url = attrs.get('short_url', instance.short_url)
-            instance.is_broken = attrs.get('is_broken', instance.is_broken)
-            instance.validation_error = attrs.get('validation_error', instance.validation_error)
-            instance.last_checked = attrs.get('last_checked', instance.last_checked)
-            instance.amount_of_views = attrs.get('amount_of_views', instance.amount_of_views)
-            return instance
-
-        # Create new instance
-        return Tinylink(**attrs)
-"""
+# class TinylinkSerializer(serializers.Serializer):
+#     pk = serializers.Field()  # Note: `Field` is an untyped read-only field.
+#     #user = serializers.PrimaryKeyRelatedField()
+#     user = serializers.Field(source='user.username')
+#     long_url = serializers.CharField(max_length=2500)
+#     short_url = serializers.CharField(required=False, max_length=32)
+#     is_broken = serializers.BooleanField(required=False)
+#     validation_error = serializers.CharField(max_length=100,
+#             required=False, default='')
+#     last_checked = serializers.DateTimeField(default=timezone.now(),
+#             required=False)
+#     amount_of_views = serializers.IntegerField(default=0)
+#
+#     def restore_object(self, attrs, instance=None):
+#         #Create or update a new tinylink instance, given a dictionary
+#         #of deserialized field values.
+#
+#         #Note that if we don't define this method, then deserializing
+#         #data will simply return a dictionary of items.
+#         if instance:
+#             # Update existing instance
+#             #instance.user = attrs.get('user', instance.user)
+#             instance.long_url = attrs.get('long_url', instance.long_url)
+#             instance.short_url = attrs.get('short_url', instance.short_url)
+#             instance.is_broken = attrs.get('is_broken', instance.is_broken)
+#             instance.validation_error = attrs.get('validation_error',
+#                                                     instance.validation_error)
+#             instance.last_checked = attrs.get('last_checked',
+#                                                 instance.last_checked)
+#             instance.amount_of_views = attrs.get('amount_of_views',
+#                                                 instance.amount_of_views)
+#             return instance
+#
+#         # Create new instance
+#         return Tinylink(**attrs)
 
 
 # class TinylinkLogSerializer(serializers.Serializer):

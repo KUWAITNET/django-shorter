@@ -1,18 +1,20 @@
-from django.core.management.base import BaseCommand
-from django.conf import settings
-from django.contrib.sites.models import Site
-from django.contrib.gis.geoip import GeoIP
-
-from tinylinks.piwik import parse_cookie
-from tinylinks.models import TinylinkLog
 import json
 import random
+import urllib.error
+import urllib.parse
+import urllib.request
+
+from django.conf import settings
+from django.contrib.gis.geoip import GeoIP
+from django.contrib.sites.models import Site
+from django.core.management.base import BaseCommand
+from tinylinks.models import TinylinkLog
+from tinylinks.piwik import parse_cookie
 
 try:
     from urllib import urlencode
 except ImportError:
     from urllib.parse import urlencode
-import urllib.request, urllib.error, urllib.parse
 
 CURRENT_DOMAIN = Site.objects.get_current().domain
 TRACK_OFFSET = 50
@@ -29,7 +31,7 @@ class Command(BaseCommand):
         for view in views:
             url = view.tinylink
             params = parse_cookie(view.cookie)
-            address = "http://%s/%s" % (CURRENT_DOMAIN, url.short_url)
+            address = "http://{}/{}".format(CURRENT_DOMAIN, url.short_url)
             if settings.GEOIP_PATH:
                 country = G.country(view.remote_ip).get("country_code").lower()
             params.update(
@@ -56,13 +58,13 @@ class Command(BaseCommand):
         # print payload
         req = urllib.request.Request(settings.PIWIK_URL)
         req.add_header("Content-Type", "application/json")
-        response = urllib.request.urlopen(req, json.dumps(payload))
-        print(("Another %d views tracked well!" % TRACK_OFFSET))
+        urllib.request.urlopen(req, json.dumps(payload))
+        print("Another %d views tracked well!" % TRACK_OFFSET)
         TinylinkLog.objects.filter(pk__in=views).update(tracked=True)
 
     def handle(self, *args, **options):
         num_visits = TinylinkLog.objects.filter(tracked=False).count()
-        print(("Untracked views: %d" % num_visits))
+        print("Untracked views: %d" % num_visits)
         if num_visits == 0:
             return
 

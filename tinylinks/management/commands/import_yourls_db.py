@@ -2,10 +2,10 @@ from __future__ import print_function
 
 from typing import List
 
-from django.core.management.base import BaseCommand, CommandError
-from tinylinks.models import Tinylink, TinylinkLog
-from tinylinks.management.commands import _queries, _config
 import mysql.connector
+from django.core.management.base import BaseCommand
+from tinylinks.management.commands import _config, _queries
+from tinylinks.models import Tinylink, TinylinkLog
 
 
 class Command(BaseCommand):

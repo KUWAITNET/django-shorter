@@ -1,7 +1,7 @@
+import os
+from datetime import datetime, timedelta
 from hashlib import md5
 from time import time
-from datetime import datetime, timedelta
-import os
 
 
 def __get_random_string(length=500):
