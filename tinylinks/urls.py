@@ -6,6 +6,7 @@ from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 
+from tinylinks.utils.router import CustomDefaultRouter
 from tinylinks.views import (
     StatisticsView,
     TinylinkCreateView,
@@ -22,7 +23,7 @@ from tinylinks.views import (
 )
 
 # Create router and register our API viewsets with it.
-router = DefaultRouter()
+router = CustomDefaultRouter()
 router.register(
     r"{}".format(getattr(settings, "TINYLINK_API_PREFIX", "tinylinks")), TinylinkViewSet
 )
