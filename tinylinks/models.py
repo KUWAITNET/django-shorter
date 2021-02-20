@@ -25,21 +25,21 @@ def get_url_response(pool, link, url):
     """
     response = False
     link.is_broken = True
-    link.redirect_location = ''
+    link.redirect_location = ""
     # Try to encode e.g. chinese letters
     try:
-        url = url.encode('utf-8')
+        url = url.encode("utf-8")
     except UnicodeEncodeError:
-        link.validation_error = _('Unicode error. Check URL characters.')
+        link.validation_error = _("Unicode error. Check URL characters.")
         return False
     try:
-        response = pool.urlopen('GET', url.decode(), retries=2, timeout=8.0)
+        response = pool.urlopen("GET", url.decode(), retries=2, timeout=8.0)
     except TimeoutError:
-        link.validation_error = _('Timeout after 8 seconds.')
+        link.validation_error = _("Timeout after 8 seconds.")
     except MaxRetryError:
-        link.validation_error = _('Failed after retrying twice.')
+        link.validation_error = _("Failed after retrying twice.")
     except (HTTPError, socket.gaierror):
-        link.validation_error = _('Not found.')
+        link.validation_error = _("Not found.")
     return response
 
 
@@ -55,7 +55,7 @@ def validate_long_url(link):
         link.is_broken = False
     elif response and response.status == 302:
         # If link is redirected, validate the redirect location.
-        if link.long_url.endswith('.pdf'):
+        if link.long_url.endswith(".pdf"):
             # Non-save pdf exception, to avoid relative path redirects
             link.is_broken = False
         else:
@@ -103,62 +103,64 @@ class Tinylink(models.Model):
     :redirect_location: Redirect location if the long_url is redirected.
 
     """
+
     user = models.ForeignKey(
         User,
-        verbose_name=_('Author'),
+        verbose_name=_("Author"),
         related_name="tinylinks",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     long_url = models.CharField(
         max_length=2500,
-        verbose_name=_('Long URL'),
+        verbose_name=_("Long URL"),
     )
 
     short_url = models.CharField(
         max_length=32,
-        verbose_name=_('Short URL'),
+        verbose_name=_("Short URL"),
         unique=True,
     )
 
     is_broken = models.BooleanField(
         default=False,
-        verbose_name=_('Status'),
+        verbose_name=_("Status"),
     )
 
     validation_error = models.CharField(
         max_length=100,
-        verbose_name=_('Validation Error'),
-        default='',
+        verbose_name=_("Validation Error"),
+        default="",
     )
 
     last_checked = models.DateTimeField(
         default=timezone.now,
-        verbose_name=_('Last validation'),
+        verbose_name=_("Last validation"),
     )
 
     amount_of_views = models.PositiveIntegerField(
         default=0,
-        verbose_name=_('Amount of views'),
+        verbose_name=_("Amount of views"),
     )
 
     redirect_location = models.CharField(
         max_length=2500,
-        verbose_name=_('Redirect location'),
-        default='',
+        verbose_name=_("Redirect location"),
+        default="",
     )
 
     def get_short_url(self) -> str:
-        return r"{}/".format(getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "prefix")) \
-               + str(self.short_url)
+        return r"{}/".format(
+            getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "prefix")
+        ) + str(self.short_url)
 
     def __unicode__(self):
         return self.short_url
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
 
     def can_be_validated(self):
         """
@@ -176,12 +178,13 @@ class TinylinkLog(models.Model):
     Model to log the usage of the short links
 
     """
+
     tinylink = models.ForeignKey(
-        'Tinylink',
-        verbose_name=_('Tinylink'),
+        "Tinylink",
+        verbose_name=_("Tinylink"),
         blank=True,
         null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     referrer = models.URLField(
@@ -194,7 +197,7 @@ class TinylinkLog(models.Model):
     cookie = models.CharField(
         max_length=127,
         blank=True,
-        default='',
+        default="",
     )
 
     remote_ip = models.GenericIPAddressField()
@@ -204,4 +207,4 @@ class TinylinkLog(models.Model):
     tracked = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ('-datetime',)
+        ordering = ("-datetime",)

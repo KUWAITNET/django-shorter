@@ -16,36 +16,103 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Tinylink',
+            name="Tinylink",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('long_url', models.CharField(max_length=2500, verbose_name='Long URL')),
-                ('short_url', models.CharField(max_length=32, unique=True, verbose_name='Short URL')),
-                ('is_broken', models.BooleanField(default=False, verbose_name='Status')),
-                ('validation_error', models.CharField(default='', max_length=100, verbose_name='Validation Error')),
-                ('last_checked', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Last validation')),
-                ('amount_of_views', models.PositiveIntegerField(default=0, verbose_name='Amount of views')),
-                ('redirect_location', models.CharField(default='', max_length=2500, verbose_name='Redirect location')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='tinylinks', to=settings.AUTH_USER_MODEL, verbose_name='Author')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "long_url",
+                    models.CharField(max_length=2500, verbose_name="Long URL"),
+                ),
+                (
+                    "short_url",
+                    models.CharField(
+                        max_length=32, unique=True, verbose_name="Short URL"
+                    ),
+                ),
+                (
+                    "is_broken",
+                    models.BooleanField(default=False, verbose_name="Status"),
+                ),
+                (
+                    "validation_error",
+                    models.CharField(
+                        default="", max_length=100, verbose_name="Validation Error"
+                    ),
+                ),
+                (
+                    "last_checked",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now,
+                        verbose_name="Last validation",
+                    ),
+                ),
+                (
+                    "amount_of_views",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Amount of views"
+                    ),
+                ),
+                (
+                    "redirect_location",
+                    models.CharField(
+                        default="", max_length=2500, verbose_name="Redirect location"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="tinylinks",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Author",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-id'],
+                "ordering": ["-id"],
             },
         ),
         migrations.CreateModel(
-            name='TinylinkLog',
+            name="TinylinkLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('referrer', models.URLField(blank=True, max_length=512)),
-                ('user_agent', models.TextField()),
-                ('cookie', models.CharField(blank=True, default='', max_length=127)),
-                ('remote_ip', models.GenericIPAddressField()),
-                ('datetime', models.DateTimeField(auto_now_add=True)),
-                ('tracked', models.BooleanField(default=False)),
-                ('tinylink', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='tinylinks.Tinylink', verbose_name='Tinylink')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("referrer", models.URLField(blank=True, max_length=512)),
+                ("user_agent", models.TextField()),
+                ("cookie", models.CharField(blank=True, default="", max_length=127)),
+                ("remote_ip", models.GenericIPAddressField()),
+                ("datetime", models.DateTimeField(auto_now_add=True)),
+                ("tracked", models.BooleanField(default=False)),
+                (
+                    "tinylink",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="tinylinks.Tinylink",
+                        verbose_name="Tinylink",
+                    ),
+                ),
             ],
             options={
-                'ordering': ('-datetime',),
+                "ordering": ("-datetime",),
             },
         ),
     ]

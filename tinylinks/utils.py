@@ -2,7 +2,7 @@ from .forms import TinylinkForm
 
 
 def shortify_url(url):
-    data = {'data': {'long_url': url}, 'mode': None}
+    data = {"data": {"long_url": url}, "mode": None}
     form = TinylinkForm(**data)
     if form.is_valid():
         obj = form.save()
