@@ -12,6 +12,6 @@ admin.autodiscover()
 
 
 urlpatterns = [
-    re_path(r'^administration/', admin.site.urls),
-    re_path(r'^s/', include('tinylinks.urls')),
+    re_path(r"^administration/", admin.site.urls),
+    re_path(r"^s/", include("tinylinks.urls")),
 ]

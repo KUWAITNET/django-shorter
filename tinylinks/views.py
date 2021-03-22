@@ -1,36 +1,26 @@
 """Views for the ``django-tinylinks`` application."""
+import re
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import permission_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count, Sum
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q, Sum
 from django.http import Http404
+from django.shortcuts import get_list_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    ListView,
-    RedirectView,
-    UpdateView,
-)
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import permission_classes
-
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  RedirectView, UpdateView)
+from rest_framework import permissions, status, viewsets
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.routers import APIRootView
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
-
-from rest_framework import generics, permissions, viewsets, status
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
-
-from django.shortcuts import get_list_or_404
-from django.db.models import Q
-from django.utils.crypto import get_random_string
-
-import re
 
 User = get_user_model()
 
@@ -69,10 +59,7 @@ class TinylinkViewMixin(object):
     def get_form_kwargs(self):
         kwargs = super(TinylinkViewMixin, self).get_form_kwargs()
         kwargs.update(
-            {
-                "user": self.request.user,
-                "mode": self.mode,
-            }
+            {"user": self.request.user, "mode": self.mode,}
         )
         return kwargs
 
@@ -193,7 +180,7 @@ class TinylinkRedirectView(RedirectView):
             url = self.url
             args = self.request.META.get("QUERY_STRING", "")
             if args and self.query_string:
-                url = "%s?%s" % (url, args)
+                url = "{}?{}".format(url, args)
             return url
         else:
             return None
@@ -266,6 +253,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
 
+class CustomDefaultRouterAPIView(APIRootView):
+    def get(self, request, *args, **kwargs):
+        return Response({})
+
+
 def database_statistics():
     """
     Helper function to retrieve total number of tinylinks and the sum of
@@ -281,9 +273,7 @@ def database_statistics():
 
 @api_view(["GET"])
 @permission_classes(
-    [
-        permissions.IsAuthenticated,
-    ]
+    [permissions.IsAuthenticated,]
 )
 def db_stats(request):
     """
@@ -297,9 +287,7 @@ def db_stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [
-        permissions.IsAuthenticated,
-    ]
+    [permissions.IsAuthenticated,]
 )
 def stats(request):
     """
@@ -310,7 +298,7 @@ def stats(request):
     try:
         paginate_by = int(request.QUERY_PARAMS.get("paginate_by", ""))
         page = int(request.QUERY_PARAMS.get("page", ""))
-    except:
+    except BaseException:
         paginate_by = 10
         page = 1
 
@@ -344,9 +332,7 @@ def stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [
-        permissions.IsAuthenticated,
-    ]
+    [permissions.IsAuthenticated,]
 )
 def tinylink_stats(request, short_url):
     """

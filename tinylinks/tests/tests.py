@@ -1,5 +1,3 @@
-import base64
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
@@ -7,7 +5,6 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from ..models import Tinylink, TinylinkLog
-from .factories import TinylinkFactory, UserFactory, TinyLogFactory
 
 User = get_user_model()
 
@@ -152,9 +149,7 @@ class TinylinkRestViewTest(APITestCase):
         print(
             "\nTesting:\nTiny Link List Links : user.is_admin=False & user in not authenticated"
         )
-        self.assertEqual(
-            tiny_link_list_response.status_code, status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(tiny_link_list_response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_admin_create_link(self):
         self.query_parameter = "https://soundcloud.com/discover"

@@ -1,16 +1,15 @@
 """Models for the ``django-tinylinks`` app."""
-from urllib.request import build_opener, HTTPCookieProcessor, Request, urlopen
-from http.cookiejar import CookieJar
 import socket
+from http.cookiejar import CookieJar
+from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
-
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 
 User = get_user_model()
 
@@ -23,21 +22,21 @@ def get_url_response(pool, link, url):
     """
     response = False
     link.is_broken = True
-    link.redirect_location = ''
+    link.redirect_location = ""
     # Try to encode e.g. chinese letters
     try:
-        url = url.encode('utf-8')
+        url = url.encode("utf-8")
     except UnicodeEncodeError:
-        link.validation_error = _('Unicode error. Check URL characters.')
+        link.validation_error = _("Unicode error. Check URL characters.")
         return False
     try:
-        response = pool.urlopen('GET', url.decode(), retries=2, timeout=8.0)
+        response = pool.urlopen("GET", url.decode(), retries=2, timeout=8.0)
     except TimeoutError:
-        link.validation_error = _('Timeout after 8 seconds.')
+        link.validation_error = _("Timeout after 8 seconds.")
     except MaxRetryError:
-        link.validation_error = _('Failed after retrying twice.')
+        link.validation_error = _("Failed after retrying twice.")
     except (HTTPError, socket.gaierror):
-        link.validation_error = _('Not found.')
+        link.validation_error = _("Not found.")
     return response
 
 
@@ -53,7 +52,7 @@ def validate_long_url(link):
         link.is_broken = False
     elif response and response.status == 302:
         # If link is redirected, validate the redirect location.
-        if link.long_url.endswith('.pdf'):
+        if link.long_url.endswith(".pdf"):
             # Non-save pdf exception, to avoid relative path redirects
             link.is_broken = False
         else:
@@ -101,58 +100,50 @@ class Tinylink(models.Model):
     :redirect_location: Redirect location if the long_url is redirected.
 
     """
+
     user = models.ForeignKey(
         User,
-        verbose_name=_('Author'),
+        verbose_name=_("Author"),
         related_name="tinylinks",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
-    long_url = models.CharField(
-        max_length=2500,
-        verbose_name=_('Long URL'),
-    )
+    long_url = models.CharField(max_length=2500, verbose_name=_("Long URL"),)
 
     short_url = models.CharField(
-        max_length=32,
-        verbose_name=_('Short URL'),
-        unique=True,
+        max_length=32, verbose_name=_("Short URL"), unique=True,
     )
 
-    is_broken = models.BooleanField(
-        default=False,
-        verbose_name=_('Status'),
-    )
+    is_broken = models.BooleanField(default=False, verbose_name=_("Status"),)
 
     validation_error = models.CharField(
-        max_length=100,
-        verbose_name=_('Validation Error'),
-        default='',
+        max_length=100, verbose_name=_("Validation Error"), default="",
     )
 
     last_checked = models.DateTimeField(
-        default=timezone.now,
-        verbose_name=_('Last validation'),
+        default=timezone.now, verbose_name=_("Last validation"),
     )
 
     amount_of_views = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_('Amount of views'),
+        default=0, verbose_name=_("Amount of views"),
     )
 
     redirect_location = models.CharField(
-        max_length=2500,
-        verbose_name=_('Redirect location'),
-        default='',
+        max_length=2500, verbose_name=_("Redirect location"), default="",
     )
+
+    def get_short_url(self) -> str:
+        return r"{}/".format(
+            getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "prefix")
+        ) + str(self.short_url)
 
     def __unicode__(self):
         return self.short_url
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
 
     def can_be_validated(self):
         """
@@ -170,26 +161,20 @@ class TinylinkLog(models.Model):
     Model to log the usage of the short links
 
     """
+
     tinylink = models.ForeignKey(
-        'Tinylink',
-        verbose_name=_('Tinylink'),
+        "Tinylink",
+        verbose_name=_("Tinylink"),
         blank=True,
         null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
-    referrer = models.URLField(
-        blank=True,
-        max_length=512,
-    )
+    referrer = models.URLField(blank=True, max_length=512,)
 
     user_agent = models.TextField()
 
-    cookie = models.CharField(
-        max_length=127,
-        blank=True,
-        default='',
-    )
+    cookie = models.CharField(max_length=127, blank=True, default="",)
 
     remote_ip = models.GenericIPAddressField()
 
@@ -198,4 +183,4 @@ class TinylinkLog(models.Model):
     tracked = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ('-datetime',)
+        ordering = ("-datetime",)
