@@ -235,7 +235,7 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         data = {
             "id": instance.id,
-            "short_url": request.build_absolute_uri("/%s" % instance.short_url),
+            "short_url": request.build_absolute_uri("/%s" % instance.get_short_url()),
             "long_url": instance.long_url,
         }
 
