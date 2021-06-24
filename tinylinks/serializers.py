@@ -19,11 +19,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 class TinylinkSerializer(serializers.ModelSerializer):
 
-    short_url = serializers.CharField(source="get_short_url", read_only=True)
+    short_url = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Tinylink
         fields = ("id", "user", "long_url", "short_url")
+
+    def get_short_url(self, obj):
+        request = self.context["request"]
+        return request.build_absolute_uri(obj.get_short_url)
 
     def create(self, validated_data):
         user = self.context["request"].user

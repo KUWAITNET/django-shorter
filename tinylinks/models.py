@@ -110,34 +110,48 @@ class Tinylink(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    long_url = models.CharField(max_length=2500, verbose_name=_("Long URL"),)
-
-    short_url = models.CharField(
-        max_length=32, verbose_name=_("Short URL"), unique=True,
+    long_url = models.CharField(
+        max_length=2500,
+        verbose_name=_("Long URL"),
     )
 
-    is_broken = models.BooleanField(default=False, verbose_name=_("Status"),)
+    short_url = models.CharField(
+        max_length=32,
+        verbose_name=_("Short URL"),
+        unique=True,
+    )
+
+    is_broken = models.BooleanField(
+        default=False,
+        verbose_name=_("Status"),
+    )
 
     validation_error = models.CharField(
-        max_length=100, verbose_name=_("Validation Error"), default="",
+        max_length=100,
+        verbose_name=_("Validation Error"),
+        default="",
     )
 
     last_checked = models.DateTimeField(
-        default=timezone.now, verbose_name=_("Last validation"),
+        default=timezone.now,
+        verbose_name=_("Last validation"),
     )
 
     amount_of_views = models.PositiveIntegerField(
-        default=0, verbose_name=_("Amount of views"),
+        default=0,
+        verbose_name=_("Amount of views"),
     )
 
     redirect_location = models.CharField(
-        max_length=2500, verbose_name=_("Redirect location"), default="",
+        max_length=2500,
+        verbose_name=_("Redirect location"),
+        default="",
     )
 
     def get_short_url(self) -> str:
-        return r"{}/".format(
-            getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "prefix")
-        ) + str(self.short_url)
+        return "/".join(
+            [getattr(settings, "TINYLINK_SHORT_URL_PREFIX", ""), str(self.short_url)]
+        )
 
     def __unicode__(self):
         return self.short_url
@@ -170,11 +184,18 @@ class TinylinkLog(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    referrer = models.URLField(blank=True, max_length=512,)
+    referrer = models.URLField(
+        blank=True,
+        max_length=512,
+    )
 
     user_agent = models.TextField()
 
-    cookie = models.CharField(max_length=127, blank=True, default="",)
+    cookie = models.CharField(
+        max_length=127,
+        blank=True,
+        default="",
+    )
 
     remote_ip = models.GenericIPAddressField()
 
