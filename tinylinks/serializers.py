@@ -23,7 +23,7 @@ class TinylinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tinylink
-        fields = ("id", "user", "long_url")
+        fields = ("id", "user", "long_url", "short_url")
 
     def create(self, validated_data):
         user = self.context["request"].user
