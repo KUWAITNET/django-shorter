@@ -26,6 +26,8 @@ router.register(
 )
 router.register(r"users", UserViewSet)
 
+PREFIX = getattr(settings, "TINYLINK_SHORT_URL_PREFIX", "")
+
 urlpatterns = [
     re_path(r"^list/$", TinylinkListView.as_view(), name="tinylink_list"),
     re_path(r"^create/$", TinylinkCreateView.as_view(), name="tinylink_create"),
@@ -81,13 +83,8 @@ urlpatterns += [
         r"^api/expand/(?P<short_url>\w+)/$", tinylink_expand, name="api_tinylink_expand"
     ),
     re_path(
-        r"^{}".format(
-            "/".join(
-                [
-                    getattr(settings, "TINYLINK_SHORT_URL_PREFIX", ""),
-                    "(?P<short_url>[a-zA-Z0-9-]+)$",
-                ]
-            )
+        r"^{}{}".format(
+            PREFIX + "/" if PREFIX else "", "(?P<short_url>[a-zA-Z0-9-]+)$"
         ),
         TinylinkRedirectView.as_view(),
         name="tinylink_redirect",
