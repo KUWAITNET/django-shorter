@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class TinylinkSerializer(serializers.ModelSerializer):
 
-    short_url = serializers.CharField(read_only=True)
+    short_url = serializers.CharField(source="get_short_url", read_only=True)
 
     class Meta:
         model = Tinylink
