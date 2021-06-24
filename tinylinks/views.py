@@ -9,12 +9,19 @@ from django.http import Http404
 from django.shortcuts import get_list_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, DeleteView, ListView,
-                                  RedirectView, UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    RedirectView,
+    UpdateView,
+)
 from rest_framework import permissions, status, viewsets
-from rest_framework.authentication import (BasicAuthentication,
-                                           SessionAuthentication,
-                                           TokenAuthentication)
+from rest_framework.authentication import (
+    BasicAuthentication,
+    SessionAuthentication,
+    TokenAuthentication,
+)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.routers import APIRootView
@@ -59,7 +66,10 @@ class TinylinkViewMixin(object):
     def get_form_kwargs(self):
         kwargs = super(TinylinkViewMixin, self).get_form_kwargs()
         kwargs.update(
-            {"user": self.request.user, "mode": self.mode,}
+            {
+                "user": self.request.user,
+                "mode": self.mode,
+            }
         )
         return kwargs
 
@@ -235,7 +245,7 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         data = {
             "id": instance.id,
-            "short_url": request.build_absolute_uri("/%s" % instance.get_short_url()),
+            "short_url": request.build_absolute_uri(instance.get_short_url()),
             "long_url": instance.long_url,
         }
 
@@ -273,7 +283,9 @@ def database_statistics():
 
 @api_view(["GET"])
 @permission_classes(
-    [permissions.IsAuthenticated,]
+    [
+        permissions.IsAuthenticated,
+    ]
 )
 def db_stats(request):
     """
@@ -287,7 +299,9 @@ def db_stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [permissions.IsAuthenticated,]
+    [
+        permissions.IsAuthenticated,
+    ]
 )
 def stats(request):
     """
@@ -332,7 +346,9 @@ def stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [permissions.IsAuthenticated,]
+    [
+        permissions.IsAuthenticated,
+    ]
 )
 def tinylink_stats(request, short_url):
     """
