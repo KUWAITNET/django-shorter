@@ -3,11 +3,11 @@ env = environ.Env()
 env.read_env(".env")
 
 config = {
-    "user": env.str("MYSQL_USER", ""),
-    "password": env.str("MYSQL_PASSWORD", ""),
-    "host": env.str("MYSQL_HOSTNAME", ""),
-    "database": env.str("MYSQL_DATABASE", ""),
-    "raise_on_warnings": env.bool("MYSQL_RAISE_ON_WARNING", ""),
+    "user": env.str("YOURLS_MYSQL_USER", ""),
+    "password": env.str("YOURLS_MYSQL_PASSWORD", ""),
+    "host": env.str("YOURLS_MYSQL_HOSTNAME", "localhost"),
+    "database": env.str("YOURLS_MYSQL_DATABASE", ""),
+    "raise_on_warnings": env.bool("YOURLS_MYSQL_RAISE_ON_WARNING", False),
 }
 
 
