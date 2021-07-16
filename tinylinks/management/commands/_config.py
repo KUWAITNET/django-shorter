@@ -1,15 +1,13 @@
-user = ""
-password = ""
-host = "127.0.0.1"
-database = ""
-raise_on_warnings = True
+import environ
+env = environ.Env()
+env.read_env(".env")
 
 config = {
-    "user": user,
-    "password": password,
-    "host": host,
-    "database": database,
-    "raise_on_warnings": raise_on_warnings,
+    "user": env.str("MYSQL_USER", ""),
+    "password": env.str("MYSQL_PASSWORD", ""),
+    "host": env.str("MYSQL_HOSTNAME", ""),
+    "database": env.str("MYSQL_DATABASE", ""),
+    "raise_on_warnings": env.bool("MYSQL_RAISE_ON_WARNING", ""),
 }
 
 
