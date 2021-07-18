@@ -8,6 +8,12 @@ from tinylinks.management.commands import _config, _queries
 from tinylinks.models import Tinylink, TinylinkLog
 
 
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
+
 class Command(BaseCommand):
     def get_tinylinks_query_data(self) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
@@ -20,11 +26,12 @@ class Command(BaseCommand):
 
     def insert_tinylinks(self):
         data = self.get_tinylinks_query_data()
-        tinylinks_to_add = [
-            Tinylink(long_url=long_url, short_url=shorturl)
-            for long_url, shorturl in data
-        ]
-        Tinylink.objects.bulk_create(tinylinks_to_add)
+        for chunk in chunks(data, 100):
+            tinylinks_to_add = [
+                Tinylink(long_url=long_url, short_url=shorturl)
+                for long_url, shorturl in chunk
+            ]
+            Tinylink.objects.bulk_create(tinylinks_to_add)
 
     def get_tinylinks_logs_query_data(self) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
