@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls import include
 from django.urls import re_path
 from django.views.generic import RedirectView, TemplateView
-from tinylinks.utils.router import CustomDefaultRouter
+from tinylinks.router import CustomDefaultRouter
 from tinylinks.views import (
     StatisticsView,
     TinylinkCreateView,
