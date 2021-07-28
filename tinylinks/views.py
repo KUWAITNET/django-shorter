@@ -16,9 +16,11 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.routers import APIRootView
+from rest_framework.views import APIView
+
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
@@ -242,13 +244,9 @@ class TinylinkViewSet(viewsets.ModelViewSet):
 
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @action(
-        methods=["POST"],
-        detail=False,
-        url_path="shorter-url.php",
-        permission_classes=[],
-    )
-    def shorter_url(self, request, *args, **kwargs):
+
+class ShorterURL(APIView):
+    def post(self, request, *args, **kwargs):
         username = request.POST.get("user")
         password = request.POST.get("password")
         long_url = request.POST.get("url")
@@ -265,17 +263,17 @@ class TinylinkViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
-            user = User.objects.create(username=username, password=password)
+            user = User.objects.create_user(username=username, password=password)
         login(request, user)
-        serializer = self.get_serializer(data={"user": user.id, "long_url": long_url})
+        serializer = TinylinkSerializer(
+            data={"user": user.id, "long_url": long_url}, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
-        headers = self.get_success_headers(serializer.data)
         request.session.flush()
         return Response(
             {"shorturl": request.build_absolute_uri(instance.get_short_url())},
             status=status.HTTP_200_OK,
-            headers=headers,
         )
 
 
