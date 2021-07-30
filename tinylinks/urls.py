@@ -32,7 +32,7 @@ urlpatterns = [
         TinylinkDeleteView.as_view(),
         name="tinylink_delete",
     ),
-    re_path(r"^yourls-api.php/", ShorterURL.as_view(), name="shorter_url",),
+    re_path(r"^yourls-api.php", ShorterURL.as_view(), name="shorter_url",),
 ]
 
 if getattr(settings, "TINYLINK_REDIRECT_404", None):
