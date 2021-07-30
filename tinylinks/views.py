@@ -1,7 +1,7 @@
 """Views for the ``django-tinylinks`` application."""
 import re
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import permission_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q, Sum
@@ -9,22 +9,18 @@ from django.http import Http404
 from django.shortcuts import get_list_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    ListView,
-    RedirectView,
-    UpdateView,
-)
+from django.utils.translation import gettext as _
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  RedirectView, UpdateView)
 from rest_framework import permissions, status, viewsets
-from rest_framework.authentication import (
-    BasicAuthentication,
-    SessionAuthentication,
-    TokenAuthentication,
-)
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
+                                           TokenAuthentication)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.routers import APIRootView
+from rest_framework.views import APIView
+
 from tinylinks.forms import TinylinkForm
 from tinylinks.models import Tinylink, TinylinkLog, validate_long_url
 from tinylinks.serializers import TinylinkSerializer, UserSerializer
@@ -66,10 +62,7 @@ class TinylinkViewMixin(object):
     def get_form_kwargs(self):
         kwargs = super(TinylinkViewMixin, self).get_form_kwargs()
         kwargs.update(
-            {
-                "user": self.request.user,
-                "mode": self.mode,
-            }
+            {"user": self.request.user, "mode": self.mode,}
         )
         return kwargs
 
@@ -252,6 +245,38 @@ class TinylinkViewSet(viewsets.ModelViewSet):
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
+class ShorterURL(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get("user")
+        password = request.POST.get("password")
+        long_url = request.POST.get("url")
+        user = None
+        if not (username and password and long_url):
+            return Response(
+                {"field_errors": _("Username, password and url fields are required.")}
+            )
+        if User.objects.filter(username=username).exists():
+            user = authenticate(request, username=username, password=password)
+            if not user:
+                return Response(
+                    {"detail": _("Invalid username or password.")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            user = User.objects.create_user(username=username, password=password)
+        login(request, user)
+        serializer = TinylinkSerializer(
+            data={"user": user.id, "long_url": long_url}, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save()
+        request.session.flush()
+        return Response(
+            {"shorturl": request.build_absolute_uri(instance.get_short_url())},
+            status=status.HTTP_200_OK,
+        )
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -283,9 +308,7 @@ def database_statistics():
 
 @api_view(["GET"])
 @permission_classes(
-    [
-        permissions.IsAuthenticated,
-    ]
+    [permissions.IsAuthenticated,]
 )
 def db_stats(request):
     """
@@ -299,9 +322,7 @@ def db_stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [
-        permissions.IsAuthenticated,
-    ]
+    [permissions.IsAuthenticated,]
 )
 def stats(request):
     """
@@ -346,9 +367,7 @@ def stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [
-        permissions.IsAuthenticated,
-    ]
+    [permissions.IsAuthenticated,]
 )
 def tinylink_stats(request, short_url):
     """

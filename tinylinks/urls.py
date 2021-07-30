@@ -4,20 +4,11 @@ from django.conf.urls import include
 from django.urls import re_path
 from django.views.generic import RedirectView, TemplateView
 from tinylinks.router import CustomDefaultRouter
-from tinylinks.views import (
-    StatisticsView,
-    TinylinkCreateView,
-    TinylinkDeleteView,
-    TinylinkListView,
-    TinylinkRedirectView,
-    TinylinkUpdateView,
-    TinylinkViewSet,
-    UserViewSet,
-    db_stats,
-    stats,
-    tinylink_expand,
-    tinylink_stats,
-)
+from tinylinks.views import (ShorterURL, StatisticsView, TinylinkCreateView,
+                             TinylinkDeleteView, TinylinkListView,
+                             TinylinkRedirectView, TinylinkUpdateView,
+                             TinylinkViewSet, UserViewSet, db_stats, stats,
+                             tinylink_expand, tinylink_stats)
 
 # Create router and register our API viewsets with it.
 router = CustomDefaultRouter()
@@ -41,6 +32,7 @@ urlpatterns = [
         TinylinkDeleteView.as_view(),
         name="tinylink_delete",
     ),
+    re_path(r"^yourls-api.php", ShorterURL.as_view(), name="shorter_url",),
 ]
 
 if getattr(settings, "TINYLINK_REDIRECT_404", None):
