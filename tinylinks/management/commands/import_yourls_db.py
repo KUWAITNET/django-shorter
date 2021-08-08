@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def insert_tinylinks(self):
         data = self.get_tinylinks_query_data()
-        for chunk in chunks(data, 100):
+        for chunk in chunks(data, 1000):
             tinylinks_to_add = [
                 Tinylink(long_url=long_url, short_url=shorturl)
                 for long_url, shorturl in chunk
