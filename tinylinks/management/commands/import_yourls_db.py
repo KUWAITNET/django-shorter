@@ -8,30 +8,31 @@ from tinylinks.management.commands import _config, _queries
 from tinylinks.models import Tinylink, TinylinkLog
 
 
-def chunks(lst, n):
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+TINYLINK_QUERY = "SELECT url, keyword FROM yourls_url LIMIT {}, {};"
 
 
 class Command(BaseCommand):
-    def get_tinylinks_query_data(self) -> List[tuple]:
+    def get_tinylinks_query_data(self, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(_queries.TINYLINK_QUERY)
+        cursor.execute(TINYLINK_QUERY.format(start, self.chunk_length))
         data = [(long_url.decode('utf-8'), short_url) for (long_url, short_url) in cursor]
         cnx.close()
         cursor.close()
         return data
 
     def insert_tinylinks(self):
-        data = self.get_tinylinks_query_data()
-        for chunk in chunks(data, self.chunk_length):
-            tinylinks_to_add = [
-                Tinylink(long_url=long_url, short_url=shorturl)
-                for long_url, shorturl in chunk
-            ]
-            Tinylink.objects.bulk_create(tinylinks_to_add)
+        start = 0
+        data = self.get_tinylinks_query_data(start)
+        while data:
+            for chunk in data:
+                tinylinks_to_add = [
+                    Tinylink(long_url=long_url, short_url=shorturl)
+                    for long_url, shorturl in chunk
+                ]
+                Tinylink.objects.bulk_create(tinylinks_to_add)
+            start += self.chunk_length
+            data = self.get_tinylinks_query_data(start)
 
     def get_tinylinks_logs_query_data(self) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
@@ -62,7 +63,7 @@ class Command(BaseCommand):
         parser.add_argument("username", nargs="+", type=str)
         parser.add_argument("paassword", nargs="+", type=str)
         parser.add_argument("dbname", nargs="+", type=str)
-        parser.add_argument("chunk-length", nargs="+", type=int)
+        parser.add_argument("chunk-length", nargs="*", type=int)
 
     def handle(self, *args, **options):
         _config.set_configs(
