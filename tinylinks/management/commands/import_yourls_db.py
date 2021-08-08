@@ -63,7 +63,7 @@ class Command(BaseCommand):
         parser.add_argument("username", nargs="+", type=str)
         parser.add_argument("paassword", nargs="+", type=str)
         parser.add_argument("dbname", nargs="+", type=str)
-        parser.add_argument("chunk-length", nargs="*", type=int)
+        parser.add_argument("chunk-length", nargs="?", type=int, default=100)
 
     def handle(self, *args, **options):
         _config.set_configs(
@@ -71,6 +71,6 @@ class Command(BaseCommand):
             password=options["paassword"][0],
             database=options["dbname"][0],
         )
-        self.chunk_length = options.get("chunk-length", 100)
+        self.chunk_length = options.get("chunk-length")
         self.insert_tinylinks()
         self.insert_tinylinks_logs()
