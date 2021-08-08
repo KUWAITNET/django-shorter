@@ -19,7 +19,7 @@ class Command(BaseCommand):
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
         cursor.execute(_queries.TINYLINK_QUERY)
-        data = [(str(long_url), short_url) for (long_url, short_url) in cursor]
+        data = [(long_url.decode('utf-8'), short_url) for (long_url, short_url) in cursor]
         cnx.close()
         cursor.close()
         return data
