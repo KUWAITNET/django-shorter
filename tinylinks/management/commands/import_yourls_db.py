@@ -9,6 +9,7 @@ from tinylinks.models import Tinylink, TinylinkLog
 
 
 TINYLINK_QUERY = "SELECT url, keyword FROM yourls_url LIMIT %s, %s;"
+TINYLINKLOG_QUERY = "SELECT referrer, user_agent, ip_address, click_time FROM yourls_log LIMIT %s, %s;"
 
 
 class Command(BaseCommand):
@@ -25,19 +26,18 @@ class Command(BaseCommand):
         start = 0
         data = self.get_tinylinks_query_data(start)
         while data:
-            for chunk in data:
-                tinylinks_to_add = [
-                    Tinylink(long_url=long_url, short_url=shorturl)
-                    for long_url, shorturl in chunk
-                ]
-                Tinylink.objects.bulk_create(tinylinks_to_add)
+            tinylinks_to_add = [
+                Tinylink(long_url=long_url, short_url=shorturl)
+                for long_url, shorturl in data
+            ]
+            Tinylink.objects.bulk_create(tinylinks_to_add)
             start += self.chunk_length
             data = self.get_tinylinks_query_data(start)
 
-    def get_tinylinks_logs_query_data(self) -> List[tuple]:
+    def get_tinylinks_logs_query_data(self, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(_queries.TINYLINKLOG_QUERY)
+        cursor.execute(TINYLINKLOG_QUERY, (start, self.chunk_length))
         data = [
             (referrer, user_agent, ip_address, click_time)
             for (referrer, user_agent, ip_address, click_time) in cursor
@@ -47,17 +47,21 @@ class Command(BaseCommand):
         return data
 
     def insert_tinylinks_logs(self):
-        data = self.get_tinylinks_logs_query_data()
-        tinylinks_logs_to_add = [
-            TinylinkLog(
-                referrer=referrer,
-                user_agent=user_agent,
-                remote_ip=remote_ip,
-                datetime=datetime,
-            )
-            for referrer, user_agent, remote_ip, datetime in data
-        ]
-        TinylinkLog.objects.bulk_create(tinylinks_logs_to_add)
+        start = 0
+        data = self.get_tinylinks_logs_query_data(start)
+        while data:
+            tinylinks_logs_to_add = [
+                TinylinkLog(
+                    referrer=referrer,
+                    user_agent=user_agent,
+                    remote_ip=remote_ip,
+                    datetime=datetime,
+                )
+                for referrer, user_agent, remote_ip, datetime in data
+            ]
+            TinylinkLog.objects.bulk_create(tinylinks_logs_to_add)
+            start += self.chunk_length
+            data = self.get_tinylinks_logs_query_data(start)
 
     def add_arguments(self, parser):
         parser.add_argument("username", nargs=1, type=str)
