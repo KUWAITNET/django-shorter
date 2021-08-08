@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def insert_tinylinks(self):
         data = self.get_tinylinks_query_data()
-        for chunk in chunks(data, 1000):
+        for chunk in chunks(data, self.chunk_length):
             tinylinks_to_add = [
                 Tinylink(long_url=long_url, short_url=shorturl)
                 for long_url, shorturl in chunk
@@ -62,6 +62,7 @@ class Command(BaseCommand):
         parser.add_argument("username", nargs="+", type=str)
         parser.add_argument("paassword", nargs="+", type=str)
         parser.add_argument("dbname", nargs="+", type=str)
+        parser.add_argument("chunk-length", nargs="+", type=int)
 
     def handle(self, *args, **options):
         _config.set_configs(
@@ -69,5 +70,6 @@ class Command(BaseCommand):
             password=options["paassword"][0],
             database=options["dbname"][0],
         )
+        self.chunk_length = options.get("chunk-length", 100)
         self.insert_tinylinks()
         self.insert_tinylinks_logs()
