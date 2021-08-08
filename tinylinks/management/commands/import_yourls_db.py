@@ -60,16 +60,16 @@ class Command(BaseCommand):
         TinylinkLog.objects.bulk_create(tinylinks_logs_to_add)
 
     def add_arguments(self, parser):
-        parser.add_argument("username", nargs="+", type=str)
-        parser.add_argument("paassword", nargs="+", type=str)
-        parser.add_argument("dbname", nargs="+", type=str)
+        parser.add_argument("username", nargs=1, type=str)
+        parser.add_argument("paassword", nargs=1, type=str)
+        parser.add_argument("dbname", nargs=1, type=str)
         parser.add_argument("chunk-length", nargs="?", type=int, default=100)
 
     def handle(self, *args, **options):
         _config.set_configs(
-            user=options["username"][0],
-            password=options["paassword"][0],
-            database=options["dbname"][0],
+            user=options["username"],
+            password=options["paassword"],
+            database=options["dbname"],
         )
         self.chunk_length = options.get("chunk-length")
         self.insert_tinylinks()
