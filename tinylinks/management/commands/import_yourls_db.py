@@ -8,14 +8,14 @@ from tinylinks.management.commands import _config, _queries
 from tinylinks.models import Tinylink, TinylinkLog
 
 
-TINYLINK_QUERY = "SELECT url, keyword FROM yourls_url LIMIT {}, {};"
+TINYLINK_QUERY = "SELECT url, keyword FROM yourls_url LIMIT %s, %s;"
 
 
 class Command(BaseCommand):
     def get_tinylinks_query_data(self, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(TINYLINK_QUERY.format(start, self.chunk_length))
+        cursor.execute(TINYLINK_QUERY, (start, self.chunk_length))
         data = [(long_url.decode('utf-8'), short_url) for (long_url, short_url) in cursor]
         cnx.close()
         cursor.close()
