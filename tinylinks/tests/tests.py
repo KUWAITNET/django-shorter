@@ -164,7 +164,7 @@ class TinylinkRestViewTest(APITestCase):
         self.query_parameter = "https://soundcloud.com/discover"
         self.client.force_authenticate(user=self.user)
         tiny_link_create_response = self.client.post(
-            "/yourls-api.php/", {"url": self.query_parameter}, format="json",
+            "/yourls-api.php", {"url": self.query_parameter}, format="json",
         )
         print("\nTesting:\nTiny Link shorter-url create One Link")
         self.assertEqual(tiny_link_create_response.status_code, status.HTTP_200_OK)
