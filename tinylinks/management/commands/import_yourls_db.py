@@ -26,6 +26,7 @@ class Command(BaseCommand):
         start = 0
         data = self.get_tinylinks_query_data(start)
         while data:
+            print("Processing rows from {} to {}".format(start, start + self.chunk_length))
             tinylinks_to_add = [
                 Tinylink(long_url=long_url, short_url=shorturl)
                 for long_url, shorturl in data
@@ -50,6 +51,8 @@ class Command(BaseCommand):
         start = 0
         data = self.get_tinylinks_logs_query_data(start)
         while data:
+            print("Processing rows from {} to {}".format(start,
+                                                         start + self.chunk_length))
             tinylinks_logs_to_add = [
                 TinylinkLog(
                     referrer=referrer,
