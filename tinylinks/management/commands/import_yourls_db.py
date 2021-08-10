@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def get_tinylinks_query_data(self, begin, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(TINYLINK_QUERY, (begin, start, self.chunk_length))
+        cursor.execute(TINYLINK_QUERY, (begin, self.chunk_length, start))
         data = [(long_url.decode('utf-8'), short_url) for (long_url, short_url) in cursor]
         cnx.close()
         cursor.close()
@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def get_tinylinks_logs_query_data(self, begin, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(TINYLINKLOG_QUERY, (begin, start, self.chunk_length))
+        cursor.execute(TINYLINKLOG_QUERY, (begin, self.chunk_length, start))
         data = [
             (referrer, user_agent, ip_address, click_time)
             for (referrer, user_agent, ip_address, click_time) in cursor
