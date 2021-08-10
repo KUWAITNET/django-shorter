@@ -8,15 +8,15 @@ from tinylinks.management.commands import _config
 from tinylinks.models import Tinylink, TinylinkLog
 
 
-TINYLINK_QUERY = "SELECT url, keyword FROM yourls_url LIMIT %s, %s;"
-TINYLINKLOG_QUERY = "SELECT referrer, user_agent, ip_address, click_time FROM yourls_log LIMIT %s, %s;"
+TINYLINK_QUERY = "SELECT url, keyword FROM yourls_url WHERE id > %s LIMIT %s, %s;"
+TINYLINKLOG_QUERY = "SELECT referrer, user_agent, ip_address, click_time FROM yourls_log WHERE id > %s LIMIT %s, %s;"
 
 
 class Command(BaseCommand):
-    def get_tinylinks_query_data(self, start) -> List[tuple]:
+    def get_tinylinks_query_data(self, begin, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(TINYLINK_QUERY, (start, self.chunk_length))
+        cursor.execute(TINYLINK_QUERY, (begin, start, self.chunk_length))
         data = [(long_url.decode('utf-8'), short_url) for (long_url, short_url) in cursor]
         cnx.close()
         cursor.close()
@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
     def insert_tinylinks(self):
         start = self.start
-        data = self.get_tinylinks_query_data(start)
+        data = self.get_tinylinks_query_data(self.begin, start)
         while data:
             print("Processing rows from {} to {}".format(start, start + self.chunk_length))
             tinylinks_to_add = [
@@ -33,12 +33,12 @@ class Command(BaseCommand):
             ]
             Tinylink.objects.bulk_create(tinylinks_to_add)
             start += self.chunk_length
-            data = self.get_tinylinks_query_data(start)
+            data = self.get_tinylinks_query_data(self.begin, start)
 
-    def get_tinylinks_logs_query_data(self, start) -> List[tuple]:
+    def get_tinylinks_logs_query_data(self, begin, start) -> List[tuple]:
         cnx = mysql.connector.connect(**_config.config)
         cursor = cnx.cursor()
-        cursor.execute(TINYLINKLOG_QUERY, (start, self.chunk_length))
+        cursor.execute(TINYLINKLOG_QUERY, (begin, start, self.chunk_length))
         data = [
             (referrer, user_agent, ip_address, click_time)
             for (referrer, user_agent, ip_address, click_time) in cursor
@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
     def insert_tinylinks_logs(self):
         start = self.start
-        data = self.get_tinylinks_logs_query_data(start)
+        data = self.get_tinylinks_logs_query_data(self.begin, start)
         while data:
             print("Processing rows from {} to {}".format(start,
                                                          start + self.chunk_length))
@@ -64,14 +64,15 @@ class Command(BaseCommand):
             ]
             TinylinkLog.objects.bulk_create(tinylinks_logs_to_add)
             start += self.chunk_length
-            data = self.get_tinylinks_logs_query_data(start)
+            data = self.get_tinylinks_logs_query_data(self.begin, start)
 
     def add_arguments(self, parser):
         parser.add_argument("username", nargs=1, type=str)
         parser.add_argument("password", nargs=1, type=str)
         parser.add_argument("dbname", nargs=1, type=str)
-        parser.add_argument("chunk-length", nargs="?", type=int, default=100)
         parser.add_argument("start", nargs="?", type=int, default=0)
+        parser.add_argument("begin", nargs="?", type=int, default=0)
+        parser.add_argument("chunk-length", nargs="?", type=int, default=100)
 
     def handle(self, *args, **options):
         _config.set_configs(
@@ -79,7 +80,8 @@ class Command(BaseCommand):
             password=options["password"][0],
             database=options["dbname"][0],
         )
-        self.chunk_length = options.get("chunk-length")
         self.start = options.get("start")
+        self.begin = options.get("begin")
+        self.chunk_length = options.get("chunk-length")
         self.insert_tinylinks()
         self.insert_tinylinks_logs()
