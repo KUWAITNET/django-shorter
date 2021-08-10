@@ -4,7 +4,7 @@ from typing import List
 
 import mysql.connector
 from django.core.management.base import BaseCommand
-from tinylinks.management.commands import _config, _queries
+from tinylinks.management.commands import _config
 from tinylinks.models import Tinylink, TinylinkLog
 
 
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         return data
 
     def insert_tinylinks(self):
-        start = 0
+        start = self.start
         data = self.get_tinylinks_query_data(start)
         while data:
             print("Processing rows from {} to {}".format(start, start + self.chunk_length))
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         return data
 
     def insert_tinylinks_logs(self):
-        start = 0
+        start = self.start
         data = self.get_tinylinks_logs_query_data(start)
         while data:
             print("Processing rows from {} to {}".format(start,
@@ -71,6 +71,7 @@ class Command(BaseCommand):
         parser.add_argument("password", nargs=1, type=str)
         parser.add_argument("dbname", nargs=1, type=str)
         parser.add_argument("chunk-length", nargs="?", type=int, default=100)
+        parser.add_argument("start", nargs="?", type=int, default=0)
 
     def handle(self, *args, **options):
         _config.set_configs(
@@ -79,5 +80,6 @@ class Command(BaseCommand):
             database=options["dbname"][0],
         )
         self.chunk_length = options.get("chunk-length")
+        self.start = options.get("start")
         self.insert_tinylinks()
         self.insert_tinylinks_logs()
