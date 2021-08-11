@@ -71,7 +71,7 @@ class Command(BaseCommand):
         parser.add_argument("password", nargs=1, type=str, help="Database user password")
         parser.add_argument("dbname", nargs=1, type=str, help="Database name")
         parser.add_argument("offset", nargs="?", type=int, default=0, help="The offset of processing rows")
-        parser.add_argument("start_id", nargs="?", type=int, default=0, help="The starting id of imported rows")
+        parser.add_argument("start-id", nargs="?", type=int, default=0, help="The starting id of imported rows")
         parser.add_argument("chunk-length", nargs="?", type=int, default=100, help="The chunk length")
 
     def handle(self, *args, **options):
@@ -81,7 +81,7 @@ class Command(BaseCommand):
             database=options["dbname"][0],
         )
         self.offset = options.get("offset")
-        self.start_id = options.get("start_id")
+        self.start_id = options.get("start-id")
         self.chunk_length = options.get("chunk-length")
         self.insert_tinylinks()
         self.insert_tinylinks_logs()
