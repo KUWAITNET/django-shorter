@@ -77,6 +77,7 @@ class TinylinkListView(TinylinkViewMixin, ListView):
     """
 
     queryset = Tinylink.objects.all()
+    paginate_by = 2
 
     @method_decorator(permission_required("tinylinks.add_tinylink"))
     def dispatch(self, request, *args, **kwargs):
