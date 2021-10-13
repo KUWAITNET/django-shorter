@@ -3,8 +3,8 @@
 
 {% block main %}
 <div class="container">
-<h2>{% trans "Your Tinylinks" %}</h2>
-{% if object_list %}
+    <h2>{% trans "Your Tinylinks" %}</h2>
+    {% if object_list %}
     <form action="." method="post">
         {% csrf_token %}
         <table class="table">
@@ -25,37 +25,71 @@
             </thead>
             <tbody>
                 {% for link in object_list %}
-                    <tr>
-                        <td>{{ link.user }}</td>
-                        <td><a href="{{ link.long_url }}">{{ link.long_url }}</a></td>
-                        <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.get_short_url }}</a></td>
-                        <td style="width: 20%;">
-                          <a href="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank">{{ link.get_short_url }}.qr</a>
-                          <img src="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" />
-                        </td>
-                        <td>{% if link.is_broken %}{% trans "Invalid" %}{% else %}{% trans "Valid" %}{% endif %}</td>
-                        {% comment %}
-                        <td>{% if link.is_broken %}{{ link.validation_error }}{% endif %}</td>
-                        <td>{% if link.redirect_location %}{{ link.redirect_location }}{% endif %}</td>
-                        <td>{{ link.last_checked }}</td>
-                        {% endcomment %}
-                        <td>
-                            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank"><img src="http://icons.iconarchive.com/icons/danleech/simple/24/facebook-icon.png"></a>
-                            <a href="https://www.twitter.com/intent/tweet?url=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" target="_blank"><img src="http://icons.iconarchive.com/icons/dakirby309/windows-8-metro/24/Web-Twitter-alt-2-Metro-icon.png"></a>
-                            <a href="https://web.whatsapp.com/send?text={{ 'https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://' | urlencode:""}}{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" data-action="share/whatsapp/share" target="_blank"><img src="http://icons.iconarchive.com/icons/limav/flat-gradient-social/24/Whatsapp-icon.png"></a>
-                            <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=link.id mode="change-long" %}">{% trans "Change Long URL" %}</a>
-                            <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=link.id mode="change-short" %}">{% trans "Change Short URL" %}</a>
-                            <a style="margin-right: 15px;" href="{% url "tinylink_delete" pk=link.id %}">{% trans "Delete" %}</a>
-                            <input type="submit" class="btn btn-primary" name="validate{{ link.id }}" value="{% trans "Re-validate URL" %}" {% if not link.can_be_validated %}disabled="disabled"{% endif %} />
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ link.user }}</td>
+                    <td><a href="{{ link.long_url }}">{{ link.long_url }}</a></td>
+                    <td><a href="{% url "tinylink_redirect" short_url=link.short_url %}">{{ link.get_short_url }}</a>
+                    </td>
+                    <td style="width: 20%;">
+                        <a href="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}"
+                            target="_blank">{{ link.get_short_url }}.qr</a>
+                        <img
+                            src="https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}" />
+                    </td>
+                    <td>{% if link.is_broken %}{% trans "Invalid" %}{% else %}{% trans "Valid" %}{% endif %}</td>
+                    {% comment %}
+                    <td>{% if link.is_broken %}{{ link.validation_error }}{% endif %}</td>
+                    <td>{% if link.redirect_location %}{{ link.redirect_location }}{% endif %}</td>
+                    <td>{{ link.last_checked }}</td>
+                    {% endcomment %}
+                    <td>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}"
+                            target="_blank"><img
+                                src="http://icons.iconarchive.com/icons/danleech/simple/24/facebook-icon.png"></a>
+                        <a href="https://www.twitter.com/intent/tweet?url=http://{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}"
+                            target="_blank"><img
+                                src="http://icons.iconarchive.com/icons/dakirby309/windows-8-metro/24/Web-Twitter-alt-2-Metro-icon.png"></a>
+                        <a href="https://web.whatsapp.com/send?text={{ 'https://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=M&chl=http://' | urlencode:""}}{{ request.get_host|urlencode:"" }}{% url "tinylink_redirect" short_url=link.short_url %}"
+                            data-action="share/whatsapp/share" target="_blank"><img
+                                src="http://icons.iconarchive.com/icons/limav/flat-gradient-social/24/Whatsapp-icon.png"></a>
+                        <a style="margin-right: 15px;"
+                            href="{% url "tinylink_update" pk=link.id mode="change-long" %}">{% trans "Change Long URL" %}</a>
+                        <a style="margin-right: 15px;"
+                            href="{% url "tinylink_update" pk=link.id mode="change-short" %}">{% trans "Change Short URL" %}</a>
+                        <a style="margin-right: 15px;"
+                            href="{% url "tinylink_delete" pk=link.id %}">{% trans "Delete" %}</a>
+                        <input type="submit" class="btn btn-primary" name="validate{{ link.id }}"
+                            value="{% trans "Re-validate URL" %}" {% if not link.can_be_validated %}disabled="disabled"
+                            {% endif %} />
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
     </form>
-{% else %}
-<p>{% trans "No tinylinks added yet." %}</p>
-{% endif %}
-<a href="{% url "tinylink_create" %}">{% trans "Create your Tinylink" %}</a>
+    {% else %}
+    <p>{% trans "No tinylinks added yet." %}</p>
+    {% endif %}
+    <a href="{% url "tinylink_create" %}">{% trans "Create your Tinylink" %}</a>
+    <div>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item ">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+            </li>
+            {% endif %}
+
+            {% for page_num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

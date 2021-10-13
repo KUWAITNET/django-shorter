@@ -1,7 +1,7 @@
 Django URL Shortner
 ================
 
-A Django application that adds an URL shortener to your site similar to bit.ly. 
+A Django application that adds an URL shortener to your site similar to bit.ly.
 
 This is a fork of [django-tinylinks](https://github.com/bitmazk/django-tinylinks).
 
@@ -76,6 +76,13 @@ can execute the command 300/10=30 times during one period.
 
 Now we can devide the total number of URLs by 30 and on each run we will
 update the X most recent URLs. After 10 runs, we will have updated all URLs.
+
+TINYLINK_PAGINATE_BY
++++++++++++++++++++++
+
+Default: 10
+
+Number of items to display on the list page '/s/list'.
 
 PIWIK_ID
 ++++++++

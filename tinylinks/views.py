@@ -1,6 +1,6 @@
 """Views for the ``django-tinylinks`` application."""
 import re
-
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import permission_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -98,6 +98,9 @@ class TinylinkListView(TinylinkViewMixin, ListView):
         if self.request.user.is_staff:
             return Tinylink.objects.all()
         return self.request.user.tinylinks.all()
+
+    def get_paginate_by(self, queryset):
+        return getattr(settings, "TINYLINKS_PAGINATE_BY", 10)
 
 
 class TinylinkCreateView(TinylinkViewMixin, CreateView):
