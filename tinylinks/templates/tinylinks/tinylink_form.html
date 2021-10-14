@@ -12,6 +12,7 @@
 {% else %}
     <h2>{% trans "Shorten your URL" %} <em></em></h2>
 {% endif %}
+
 <form method="post" action=".">
     {% csrf_token %}
     <div class="row">
@@ -23,12 +24,14 @@
 </form>
 <br />
 <a style="margin-right: 15px;" href="{% url "tinylink_list" %}">{% trans "Back to list" %}</a>
+
 {% if form.instance.pk %}
     {% if mode == "change-short" %}
         <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=form.instance.pk mode="change-long" %}">{% trans "Change Long URL instead" %}</a>
     {% else %}
         <a style="margin-right: 15px;" href="{% url "tinylink_update" pk=form.instance.pk mode="change-short" %}">{% trans "Change Short URL instead" %}</a>
     {% endif %}
+    <a style="margin-right: 15px;" href="{% url "tinylink_create" %}">{% trans "Create another Tiny link" %}</a>
     <a href="{% url "tinylink_delete" pk=form.instance.pk %}">{% trans "Delete" %}</a>
 {% endif %}
 </div>
