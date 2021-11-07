@@ -42,7 +42,7 @@ class TinylinkSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = self.context["request"].user
+        user = self.context.get("user", None) or self.context["request"].user
         brothers = Tinylink.objects.filter(
             long_url=validated_data["long_url"], user=user
         )
