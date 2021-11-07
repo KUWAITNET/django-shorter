@@ -260,7 +260,7 @@ class TinylinkViewSet(viewsets.ModelViewSet):
 
 class ShorterURL(APIView):
     def post(self, request, *args, **kwargs):
-        username = request.POST.get("user")
+        username = request.POST.get("username")
         password = request.POST.get("password")
         long_url = request.POST.get("url")
         user = None
