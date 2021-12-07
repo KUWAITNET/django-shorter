@@ -30,3 +30,7 @@ TINYLINK_PAGINATE_BY = 2
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 GEOIP_PATH = os.path.join(BASE_DIR, "geoip")
 GEOIP_PATH = "/development/django-tinylinks/geoip"
+
+# Suppress warnings for models without primary keys being generated with a primary key in Django 3.2.x
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField' 
+
