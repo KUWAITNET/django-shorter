@@ -10,12 +10,19 @@ from django.shortcuts import get_list_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import (CreateView, DeleteView, ListView,
-                                  RedirectView, UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    RedirectView,
+    UpdateView,
+)
 from rest_framework import permissions, status, viewsets
-from rest_framework.authentication import (BasicAuthentication,
-                                           SessionAuthentication,
-                                           TokenAuthentication)
+from rest_framework.authentication import (
+    BasicAuthentication,
+    SessionAuthentication,
+    TokenAuthentication,
+)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.routers import APIRootView
@@ -62,7 +69,10 @@ class TinylinkViewMixin(object):
     def get_form_kwargs(self):
         kwargs = super(TinylinkViewMixin, self).get_form_kwargs()
         kwargs.update(
-            {"user": self.request.user, "mode": self.mode,}
+            {
+                "user": self.request.user,
+                "mode": self.mode,
+            }
         )
         return kwargs
 
@@ -250,7 +260,7 @@ class TinylinkViewSet(viewsets.ModelViewSet):
 
 class ShorterURL(APIView):
     def post(self, request, *args, **kwargs):
-        username = request.POST.get("user")
+        username = request.POST.get("username")
         password = request.POST.get("password")
         long_url = request.POST.get("url")
         user = None
@@ -267,13 +277,12 @@ class ShorterURL(APIView):
                 )
         else:
             user = User.objects.create_user(username=username, password=password)
-        login(request, user)
         serializer = TinylinkSerializer(
-            data={"user": user.id, "long_url": long_url}, context={"request": request}
+            data={"user": user.id, "long_url": long_url},
+            context={"request": request, "user": user},
         )
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
-        request.session.flush()
         return Response(
             {"shorturl": request.build_absolute_uri(instance.get_short_url())},
             status=status.HTTP_200_OK,
@@ -311,7 +320,9 @@ def database_statistics():
 
 @api_view(["GET"])
 @permission_classes(
-    [permissions.IsAuthenticated,]
+    [
+        permissions.IsAuthenticated,
+    ]
 )
 def db_stats(request):
     """
@@ -325,7 +336,9 @@ def db_stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [permissions.IsAuthenticated,]
+    [
+        permissions.IsAuthenticated,
+    ]
 )
 def stats(request):
     """
@@ -370,7 +383,9 @@ def stats(request):
 
 @api_view(["GET"])
 @permission_classes(
-    [permissions.IsAuthenticated,]
+    [
+        permissions.IsAuthenticated,
+    ]
 )
 def tinylink_stats(request, short_url):
     """

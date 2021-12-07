@@ -1,7 +1,12 @@
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+
+from tinylinks.detaults import DEFAULT_ALLOWED_URL_SCHEMES
 from tinylinks.models import Tinylink
 
 User = get_user_model()
@@ -25,8 +30,19 @@ class TinylinkSerializer(serializers.ModelSerializer):
         model = Tinylink
         fields = ("id", "user", "long_url", "short_url")
 
+    def validate_long_url(self, value):
+        url = urlparse(value)
+        schemes = getattr(
+            settings, "TINYLINK_ALLOWED_URL_SCHEMES", DEFAULT_ALLOWED_URL_SCHEMES
+        )
+        if url.scheme not in schemes:
+            raise serializers.ValidationError(
+                _(f"URL scheme must be one of the following: {','.join(schemes)}")
+            )
+        return value
+
     def create(self, validated_data):
-        user = self.context["request"].user
+        user = self.context.get("user", None) or self.context["request"].user
         brothers = Tinylink.objects.filter(
             long_url=validated_data["long_url"], user=user
         )
