@@ -12,3 +12,4 @@ static/
 .venv
 .env/
 .env
+test.txt
