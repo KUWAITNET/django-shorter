@@ -310,7 +310,11 @@ If you want to contribute to this project, please perform the following steps::
     $ pip install -r requirements.txt
     $ ./manage.py test
     # You should get no failing tests
-
+    $ Run coverage to generate a .coverage file, then run
+    # coverage json
+    $ To generate a json file, and then run
+    # ./badgegen.py
+    $ To generate the badge
     $ git co -b feature_branch master
     # Implement your feature and tests
     $ ./manage.py test
