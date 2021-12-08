@@ -33,8 +33,9 @@ jobs:
         run: python badgegen.py
       
       - name: Pull changes
-        id: pull
+        id: force pull
         run: |
+          git reset --hard HEAD
           git pull
       - name: Commit files
         id: commit
