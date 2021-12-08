@@ -21,12 +21,6 @@ jobs:
       - name: Install coverage
         run: pip install coverage
       
-      - name: Run tox with coverage
+      - name: Run tox
         # Run tox using the version of Python in `PATH`
         run: tox -e py
-      - name: Generate coverage JSON
-        run: coverage json
-      - name: Install urllib3 to get badge.
-        run: pip install urllib3
-      - name: Generate badge.
-        run: python coveragebadgegen.py
