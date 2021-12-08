@@ -5,8 +5,9 @@
    :alt: CodeQL Analysis
 
     
-    
-
+ 
+.. image:: https://github.com/asdmenon/django-shorter/blob/master/coverage_badge.svg
+   :alt: Code Coverage
 
 ================
 
