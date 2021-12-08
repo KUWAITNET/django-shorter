@@ -20,7 +20,8 @@ jobs:
         run: pip install tox
       - name: Install coverage
         run: pip install coverage
-      
+      - name: Install urllib3
+        run: pip install urllib3
       - name: Run tox
         # Run tox using the version of Python in `PATH`
         run: tox -e py
