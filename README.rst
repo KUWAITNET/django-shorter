@@ -3,6 +3,9 @@
 
 .. image:: https://github.com/asdmenon/django-shorter/actions/workflows/codeql-analysis.yml/badge.svg
    :alt: CodeQL Analysis
+
+.. image:: https://github.com/asdmenon/django-shorter/blob/master/coverage_badge.svg
+   :alt: Coverage
 ================
 
 A Django application that adds an URL shortener to your site similar to bit.ly.
