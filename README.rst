@@ -7,8 +7,6 @@
     
     
 
-.. image:: https://codecov.io/gh/asdmenon/django-shorter/branch/master/graph/badge.svg?token=YOLOO331IQ
-:target: https://codecov.io/gh/asdmenon/django-shorter
 
 ================
 
