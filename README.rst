@@ -1,4 +1,6 @@
-Django URL Shortner
+.. image:: https://github.com/asdmenon/django-shorter/actions/workflows/tox-tests.yml/badge.svg
+   :alt: Python package build status
+
 ================
 
 A Django application that adds an URL shortener to your site similar to bit.ly.

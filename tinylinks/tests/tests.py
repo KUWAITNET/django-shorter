@@ -10,8 +10,7 @@ User = get_user_model()
 
 
 class TinyLinkTest(APITestCase):
-    def setUp(self):
-        super(TinyLinkTest, self).setUp()
+    def setUp(self):        
         self.tiny_link_list_url = reverse("tinylink_list")
         self.tiny_link_create_url = reverse("tinylink_create")
         self.user = User.objects.create_superuser(
@@ -122,8 +121,7 @@ class TinyLinkTest(APITestCase):
 
 
 class TinylinkRestViewTest(APITestCase):
-    def setUp(self):
-        super(TinylinkRestViewTest).setUp()
+    def setUp(self):        
         self.user = User.objects.create_superuser(
             username="gerges",
             email="gerges_test@kuwaitnet.com",
@@ -149,7 +147,7 @@ class TinylinkRestViewTest(APITestCase):
         print(
             "\nTesting:\nTiny Link List Links : user.is_admin=False & user in not authenticated"
         )
-        self.assertEqual(tiny_link_list_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(tiny_link_list_response.status_code, status.HTTP_401_UNAUTHORIZED)        
 
     def test_authenticated_admin_create_link(self):
         self.query_parameter = "https://soundcloud.com/discover"
@@ -164,7 +162,7 @@ class TinylinkRestViewTest(APITestCase):
         self.query_parameter = "https://soundcloud.com/discover"
         self.client.force_authenticate(user=self.user)
         tiny_link_create_response = self.client.post(
-            "/yourls-api.php", {"url": self.query_parameter}, format="json",
+            "/s/yourls-api.php", {"url": self.query_parameter}, format="json",
         )
         print("\nTesting:\nTiny Link shorter-url create One Link")
         self.assertEqual(tiny_link_create_response.status_code, status.HTTP_200_OK)
