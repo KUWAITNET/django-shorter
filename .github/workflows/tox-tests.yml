@@ -26,5 +26,7 @@ jobs:
         run: tox -e py
       - name: Generate coverage JSON
         run: coverage json
+      - name: Install urllib3 to get badge.
+        run: pip install urllib3
       - name: Generate badge.
         run: python coveragebadgegen.py
