@@ -23,8 +23,8 @@ jobs:
       
       - name: Run tox with coverage
         # Run tox using the version of Python in `PATH`
-        run:  coverage run tox -e py
+        run: tox -e py
       - name: Generate coverage JSON
         run: coverage json
-      - name: Generate coverage badge.
+      - name: Generate badge.
         run: python coveragebadgegen.py
