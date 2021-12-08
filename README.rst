@@ -1,3 +1,5 @@
+![Tox tests](https://github.com/asdmenon/django-shorter/actions/workflows/tox-tests.yml/badge.svg)
+
 Django URL Shortner
 ================
 
