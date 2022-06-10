@@ -1,7 +1,7 @@
 """Admin sites for the ``django-tinylinks`` app."""
 from django.contrib import admin
 from django.template.defaultfilters import truncatechars
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from tinylinks.forms import TinylinkAdminForm
 from tinylinks.models import Tinylink, TinylinkLog
 
@@ -20,7 +20,16 @@ class TinylinkAdmin(admin.ModelAdmin):
     form = TinylinkAdminForm
 
     fieldsets = [
-        ("Tinylink", {"fields": ["user", "long_url", "short_url",]},),
+        (
+            "Tinylink",
+            {
+                "fields": [
+                    "user",
+                    "long_url",
+                    "short_url",
+                ]
+            },
+        ),
     ]
 
     def url_truncated(self, obj):

@@ -3,7 +3,7 @@ import random
 
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from tinylinks.models import Tinylink, validate_long_url
 
 
@@ -142,7 +142,9 @@ class TinylinkAdminForm(forms.ModelForm):
         self.cleaned_data = super(TinylinkAdminForm, self).clean()
         # If short URL is occupied throw out an error, or fail silent.
         try:
-            twin = Tinylink.objects.get(short_url=self.cleaned_data.get("short_url"),)
+            twin = Tinylink.objects.get(
+                short_url=self.cleaned_data.get("short_url"),
+            )
         except Tinylink.DoesNotExist:
             slug = self.cleaned_data.get("short_url")
             while not slug or Tinylink.objects.filter(short_url=slug):
