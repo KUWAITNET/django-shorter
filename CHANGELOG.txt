@@ -1,5 +1,8 @@
-=== (ongoing) ===
-
+=== 0.7.0 ===
+* Add import from yourlsdb shortener
+* Add pagination for links listing page
+* Bump minimum Django version to 3.2.13 LTS
+* Add more linting, pre-commit, code formatting with black
 
 === 0.6.1 ===
 * Fixed Tinylinks restful API

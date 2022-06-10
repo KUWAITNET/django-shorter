@@ -9,7 +9,6 @@ jobs:
     strategy:
       matrix:
         python: ["3.7", "3.8", "3.9", "3.10"]
-      fail-fast: false    
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
@@ -25,4 +24,3 @@ jobs:
       - name: Run tox
         # Run tox using the version of Python in `PATH`
         run: tox -e py
-            
