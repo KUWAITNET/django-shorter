@@ -3,7 +3,9 @@ import random
 
 from django import forms
 from django.conf import settings
+from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
+
 from tinylinks.models import Tinylink, validate_long_url
 
 
@@ -155,7 +157,7 @@ class TinylinkAdminForm(forms.ModelForm):
             self.cleaned_data.update({"short_url": slug})
         else:
             if twin != self.instance:
-                self._errors["short_url"] = forms.util.ErrorList(
+                self._errors["short_url"] = ErrorList(
                     [_("This short url already exists. Please try another one.")]
                 )
         return self.cleaned_data
