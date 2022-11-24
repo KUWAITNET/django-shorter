@@ -468,7 +468,7 @@ class TinyLinkModelTest(TestCase):
     def test_validate_long_url_with_error(self, mock_fn):
         response = Mock()
         mock_fn.return_value = response
-        validate_long_url(self.link)
+        validate_long_url(self.link, True)
         self.assertEqual(self.link.validation_error, "URL not accessible.")
 
     def test_can_not_be_validated(self):
