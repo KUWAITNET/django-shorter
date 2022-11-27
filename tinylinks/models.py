@@ -47,8 +47,8 @@ def validate_long_url(link, force_validation=False):
     availability.
 
     """
-    from tinylinks.detaults import VALIDATION_ENABLED
-    if not VALIDATION_ENABLED and not force_validation:
+    from tinylinks.detaults import TINYLINK_VALIDATION_ENABLED
+    if not TINYLINK_VALIDATION_ENABLED and not force_validation:
         return link
     http = PoolManager()
     response = get_url_response(http, link, link.long_url)
