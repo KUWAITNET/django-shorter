@@ -42,7 +42,11 @@ class TinylinkSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = self.context.get("user", None) or self.context["request"].user
+        user = self.context.get("user", None)
+        if not user:
+            request = self.context.get("request", None)
+            if request:
+                user = request.user
         if user and user.is_anonymous:
             user = None
         brothers = Tinylink.objects.filter(
