@@ -1,5 +1,6 @@
 """Views for the ``django-tinylinks`` application."""
 import re
+
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import permission_required
@@ -10,19 +11,12 @@ from django.shortcuts import get_list_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    ListView,
-    RedirectView,
-    UpdateView,
-)
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  RedirectView, UpdateView)
 from rest_framework import permissions, status, viewsets
-from rest_framework.authentication import (
-    BasicAuthentication,
-    SessionAuthentication,
-    TokenAuthentication,
-)
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
+                                           TokenAuthentication)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.routers import APIRootView
@@ -392,10 +386,10 @@ def tinylink_stats(request, short_url):
     Return stats for a link
 
     """
+    try:
 
-    tinylink = Tinylink.objects.get(short_url=short_url)
-
-    if not tinylink:
+        tinylink = Tinylink.objects.get(short_url=short_url)
+    except:  # noqa
         data = {"message": "Error: Link not found"}
         return Response(data, status=status.HTTP_404_NOT_FOUND)
 
