@@ -158,6 +158,10 @@ class Tinylink(models.Model):
 
     class Meta:
         ordering = ["-id"]
+        indexes = [
+            models.Index(fields=["short_url"]),
+            models.Index(fields=["long_url"]),
+        ]
 
     def can_be_validated(self):
         """
