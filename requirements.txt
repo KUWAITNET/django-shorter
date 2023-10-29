@@ -4,7 +4,7 @@
 # Packages essential to this app. Needed by anyone who wants to use this app.
 # ===========================================================================
 django==3.2.*
-urllib3==1.26.7
+urllib3==1.26.18
 djangorestframework==3.12.4
 
 
