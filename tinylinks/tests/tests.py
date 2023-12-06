@@ -468,7 +468,7 @@ class TinyLinkModelTest(TestCase):
     def test_validate_long_url_with_error(self, mock_fn):
         response = Mock()
         mock_fn.return_value = response
-        validate_long_url(self.link)
+        validate_long_url(self.link, True)
         self.assertEqual(self.link.validation_error, "URL not accessible.")
 
     def test_can_not_be_validated(self):
@@ -480,6 +480,24 @@ class TinyLinkModelTest(TestCase):
             2024, 6, 15, 8, 27, 0, 894109, pytz.UTC
         )
         self.assertEqual(True, self.link.can_be_validated())
+
+    @patch("tinylinks.models.get_url_response")
+    @patch("tinylinks.detaults.TINYLINK_VALIDATION_ENABLED", True)
+    def test_validate_long_url_enabled(self, mock_fn):
+        """ test validate long url is enabled """
+        response = Mock()
+        mock_fn.return_value = response
+        link = validate_long_url(self.link)
+        self.assertNotEqual(link.validation_error, "")
+
+    @patch("tinylinks.models.get_url_response")
+    @patch("tinylinks.detaults.TINYLINK_VALIDATION_ENABLED", False)
+    def test_validate_long_url_disabled(self, mock_fn):
+        """ test validate long url is disabled """
+        response = Mock()
+        mock_fn.return_value = response
+        link = validate_long_url(self.link)
+        self.assertEqual(link.validation_error, "")
 
 
 class TinyLinkFormTests(TestCase):

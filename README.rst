@@ -120,6 +120,13 @@ Default: None
 
 The path for the MaxMind GeoIP data.
 
+TINYLINK_VALIDATION_ENABLED
++++++++++++++++++++++
+
+Default: False
+
+The validation of the long url , disabled by default
+
 Usage
 -----
 

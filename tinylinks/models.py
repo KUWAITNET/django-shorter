@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError, MaxRetryError, TimeoutError
 
+
 User = get_user_model()
 
 
@@ -40,12 +41,15 @@ def get_url_response(pool, link, url):
     return response
 
 
-def validate_long_url(link):
+def validate_long_url(link, force_validation=False):
     """
     Function to validate a URL. The validator uses urllib3 to test the URL's
     availability.
 
     """
+    from tinylinks.detaults import TINYLINK_VALIDATION_ENABLED
+    if not TINYLINK_VALIDATION_ENABLED and not force_validation:
+        return link
     http = PoolManager()
     response = get_url_response(http, link, link.long_url)
     if response and response.status == 200:
